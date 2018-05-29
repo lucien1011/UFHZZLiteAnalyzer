@@ -28,7 +28,7 @@ Mela* mela = new Mela(13.0,125.0,TVar::SILENT);
 int main(int argc, char *argv[])
 {    
      
-  debug = true;     
+  debug = false;     
 
   if(argc > 6)  {
       cout<<argv[0]<<" filename "<<argv[1]<<" outfile "<<argv[2]<<" isData "<<argv[3]<<endl;
@@ -130,7 +130,7 @@ void ReadTree(TTree* tree, TTree* & newtree, TString filename){
         if(evt%1000==0) cout<<"Event "<<evt<<"/"<<tree->GetEntries()<<endl;
 //        if(evt%5!=0) continue;
         tree->GetEntry(evt);
-        cout<<"Run: "<<Run<<" Lumi: "<<LumiSect<<" Event: "<<Event<<endl;
+//        cout<<"Run: "<<Run<<" Lumi: "<<LumiSect<<" Event: "<<Event<<endl;
         passTrig=false;
         if (isData) {
             passTrig = passedTrig;
