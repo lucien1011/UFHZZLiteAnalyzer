@@ -20,9 +20,17 @@ samplesMC  = [
 
 # ____________________________________________________________________________________________________________ ||
 # Signal sample
-dirSig = 'root://cmsio5.rc.ufl.edu//store/user/klo/DarkPhoton_Moriond17_NTuple/ZD_UpTo0j_MZD20_Eps1e-2/ZD_UpTo0j_MZD20_Eps1e-2/crab_ZD_UpTo0j_MZD20_Eps1e-2_klo/180424_132813/0000/'
+#dirSig = 'root://cmsio5.rc.ufl.edu//store/user/klo/DarkPhoton_Moriond17_NTuple/ZD_UpTo0j_MZD20_Eps1e-2/ZD_UpTo0j_MZD20_Eps1e-2/crab_ZD_UpTo0j_MZD20_Eps1e-2_klo/180424_132813/0000/'
+#dirSig = 'root://cmsio5.rc.ufl.edu//store/user/klo/DarkPhoton_Moriond17_NTuple/ZD_UpTo0j_MZD15_Eps1e-2/ZD_UpTo0j_MZD15_Eps1e-2/crab_ZD_UpTo0j_MZD15_Eps1e-2_klo/180619_210713/0000/'
+#dirSig = 'root://cmsio5.rc.ufl.edu//store/user/klo/DarkPhoton_Moriond17_NTuple/ZD_UpTo0j_MZD25_Eps1e-2/ZD_UpTo0j_MZD25_Eps1e-2/crab_ZD_UpTo0j_MZD25_Eps1e-2_klo/180619_212641/0000/'
+#dirSig = 'root://cmsio5.rc.ufl.edu//store/user/klo/DarkPhoton_Moriond17_NTuple/ZD_UpTo0j_MZD30_Eps1e-2/ZD_UpTo0j_MZD30_Eps1e-2/crab_ZD_UpTo0j_MZD30_Eps1e-2_klo/180619_212358/0000/'
+dirSig = 'root://cmsio5.rc.ufl.edu//store/user/klo/DarkPhoton_Moriond17_NTuple/ZD_UpTo0j_MZD35_Eps1e-2/ZD_UpTo0j_MZD35_Eps1e-2/crab_ZD_UpTo0j_MZD35_Eps1e-2_klo/180619_213523/0000/'
 samplesSig = [
-        "ZD_UpTo0j_MZD20_Eps1e-2_klo_%s"%i for i in range(1,78)
+        #"ZD_UpTo0j_MZD20_Eps1e-2_klo_%s"%i for i in range(1,78)
+        #"ZD_UpTo0j_MZD15_Eps1e-2_klo_%s"%i for i in range(1,15)
+        #"ZD_UpTo0j_MZD25_Eps1e-2_klo_%s"%i for i in range(1,17)
+        #"ZD_UpTo0j_MZD30_Eps1e-2_klo_%s"%i for i in range(1,17)
+        "ZD_UpTo0j_MZD35_Eps1e-2_klo_%s"%i for i in range(1,18)
         ]
 
 # ____________________________________________________________________________________________________________ ||
@@ -35,19 +43,20 @@ samplesData = [
 
 # ____________________________________________________________________________________________________________ ||
 # Configuration
-#inputDir        = dirSig
-#inputSamples    = samplesSig
-inputDir        = dirMC
-inputSamples    = samplesMC
-outputDir       = "/raid/raid7/lucien/Higgs/DarkZ-NTuple/20180425/SkimTree_v1/"
+inputDir        = dirSig
+inputSamples    = samplesSig
+#inputDir        = dirMC
+#inputSamples    = samplesMC
+#outputDir       = "/raid/raid7/lucien/Higgs/DarkZ-NTuple/20180619/SkimTree_v1/"
+outputDir       = "/raid/raid7/lucien/Higgs/DarkZ-NTuple/20180619/SkimTree_DarkZ_MZd35_v1/"
 
 njobs = 5
 if njobs > 6: raise RuntimeError, "Too many resources required"
 for job in range(1,njobs+1):
   for sample in inputSamples:
-    cmd = 'nohup ./ZZ4L_Ana.exe '+inputDir+'/'+sample+' '+outputDir+sample+' 0 '+str(job)+' '+str(njobs)+' >& Dump/'+sample+'_'+str(job)+'.log &'
+    #cmd = 'nohup ./ZZ4L_Ana.exe '+inputDir+'/'+sample+' '+outputDir+sample+' 0 '+str(job)+' '+str(njobs)+' >& Dump/'+sample+'_'+str(job)+'.log &'
     #cmd = './ZZ4L_Ana.exe '+inputDir+'/'+sample+' '+outputDir+sample+' 0 '+str(job)+' '+str(njobs)+' >& Dump/'+sample+'_'+str(job)+'.log &'
-    #cmd = './ZZ4L_Ana.exe '+inputDir+'/'+sample+' '+outputDir+sample+' 0 '+str(job)+' '+str(njobs)
+    cmd = './ZZ4L_Ana.exe '+inputDir+'/'+sample+' '+outputDir+sample+' 0 '+str(job)+' '+str(njobs)
     print cmd
     os.system(cmd)
 
