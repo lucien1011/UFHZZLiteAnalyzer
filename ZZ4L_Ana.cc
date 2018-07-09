@@ -404,7 +404,7 @@ void ReadTree(TTree* tree, TTree* & newtree, TString filename){
                         }
                         
                     }
-                    if (!passSmartCut) continue; //Fix me
+                    //if (!passSmartCut) continue; //Fix me
             //        if (!passSmartCut) cout<<"smart cut not passed:"<<endl;
                     if (debug) cout<<" massZ1: "<<Z1.M()<<" massZ2: "<<Z2.M()<<endl;
                     if (Z1.M() < mZ1Low) continue;
