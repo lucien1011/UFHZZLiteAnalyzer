@@ -10,15 +10,19 @@ LIBS += -L$(ROOFITSYS)/lib -lRooFit -lRooFitCore -lRooStats
 LIBS += -L${CMSSW_BASE}/lib/slc6_amd64_gcc630/ -lZZMatrixElementMEKD -lZZMatrixElementMELA -lZZMatrixElementMEMCalculators -lZZMatrixElementPythonWrapper
 
 zz4lOBJ=ZZ4L_Ana.o
+zxOBJ=ZX_Ana.o
 kinZfitterOBJ=KinZfitter/KinZfitter.o
 helperFunctionOBJ=KinZfitter/HelperFunction.o
 
 .PHONY: clean all main test
 
-all: ZZ4L_Ana
+all: ZZ4L_Ana ZX_Ana
 
 ZZ4L_Ana: ZZ4L_Ana.o 
 		$(CXX) -o ZZ4L_Ana.exe $(zz4lOBJ) $(helperFunctionOBJ) $(kinZfitterOBJ) $(LIBS)
+
+ZX_Ana: ZX_Ana.o
+		$(CXX) -o ZXL_Ana.exe $(zxOBJ) $(helperFunctionOBJ) $(kinZfitterOBJ) $(LIBS)
 
 clean:
 	@rm *.o *.exe

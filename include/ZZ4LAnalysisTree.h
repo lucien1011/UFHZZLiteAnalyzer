@@ -85,11 +85,12 @@ float deltaphiZZ;
 int idL1, idL2, idL3, idL4;
 
 float mass4l, mass4lErr;
+float mass3l;
 float mass4lREFIT, mass4lErrREFIT;
 float massZ1REFIT, massZ2REFIT;
 float mass4mu, mass4e, mass2e2mu;
 float pT4l;
-float massZ1, massZ2;
+float massZ1, massZ1_Z1L, massZ2;
 int njets_pt30_eta4p7;
 int njets_pt30_eta2p5;
 float pTj1, etaj1;

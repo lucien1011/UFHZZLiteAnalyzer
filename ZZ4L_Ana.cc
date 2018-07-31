@@ -52,23 +52,7 @@ int main(int argc, char *argv[])
       outfilename+="_";
       outfilename+=argv[4];
   }
-//  kinZfitter = new KinZfitter(isData);
 
-
-  /*
-  if (!isData) {
-      kalmanMuonCalibrator = new KalmanMuonCalibrator("MC_80X_13TeV");
-  } else {
-      kalmanMuonCalibrator = new KalmanMuonCalibrator("DATA_80X_13TeV");
-  }
-  */
-
-//  infile = ROOT.TFile.Open("root://xrootd2.ihepa.ufl.edu/" + filename)
-//  cout<<filename<<endl; 
-  ///filename = "root://xrootd2.ihepa.ufl.edu/"+filename;
-//  cout<<"filename"<<filename<<endl;
-//  cout<<"filename2:"<<filename<<endl;
-//  TFile* infile = new TFile(filename+".root");
   TFile* infile = TFile::Open(filename+".root");
   TTree* tree;
   tree = (TTree*) infile->Get("Ana/passedEvents");
@@ -133,48 +117,65 @@ void ReadTree(TTree* tree, TTree* & newtree, TString filename){
 //        cout<<"Run: "<<Run<<" Lumi: "<<LumiSect<<" Event: "<<Event<<endl;
         passTrig=false;
         if (isData) {
-            passTrig = passedTrig;
-            /*
-            // double ele
-            if (strstr((*triggersPassed).c_str(),"HLT_Ele17_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v")) passTrig=true;
-            else if (strstr((*triggersPassed).c_str(),"HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v")) passTrig=true;
-            else if (strstr((*triggersPassed).c_str(),"HLT_DoubleEle33_CaloIdL_GsfTrkIdVL_v")) passTrig=true;
-            // double mu
-            else if (strstr((*triggersPassed).c_str(),"HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_v")) passTrig=true;
-            else if (strstr((*triggersPassed).c_str(),"HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_v")) passTrig=true;
-            else if (strstr((*triggersPassed).c_str(),"HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v")) passTrig=true;
-            else if (strstr((*triggersPassed).c_str(),"HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v")) passTrig=true;
             // single ele
-            else if (strstr((*triggersPassed).c_str(),"HLT_Ele25_eta2p1_WPTight_Gsf_v")) passTrig=true;
-            else if (strstr((*triggersPassed).c_str(),"HLT_Ele27_WPTight_Gsf_v")) passTrig=true;
-            else if (strstr((*triggersPassed).c_str(),"HLT_Ele27_eta2p1_WPLoose_Gsf_v")) passTrig=true;
-            else if (strstr((*triggersPassed).c_str(),"HLT_Ele32_eta2p1_WPTight_Gsf_v")) passTrig=true;
-            // single mu
-            else if (strstr((*triggersPassed).c_str(),"HLT_IsoMu20_v")) passTrig=true;
-            else if (strstr((*triggersPassed).c_str(),"HLT_IsoTkMu20_v")) passTrig=true;
-            else if (strstr((*triggersPassed).c_str(),"HLT_IsoMu22_v")) passTrig=true;
-            else if (strstr((*triggersPassed).c_str(),"HLT_IsoTkMu22_v")) passTrig=true;
-            else if (strstr((*triggersPassed).c_str(),"HLT_IsoMu22_eta2p1_v")) passTrig=true;
-            else if (strstr((*triggersPassed).c_str(),"HLT_IsoTkMu22_eta2p1_v")) passTrig=true;
-            else if (strstr((*triggersPassed).c_str(),"HLT_IsoMu24_v")) passTrig=true;
-            else if (strstr((*triggersPassed).c_str(),"HLT_IsoTkMu24_v")) passTrig=true;
-            // multi lepton
-            else if (strstr((*triggersPassed).c_str(),"HLT_Mu8_TrkIsoVVL_Ele17_CaloIdL_TrackIdL_IsoVL_v")) passTrig=true;
-            else if (strstr((*triggersPassed).c_str(),"HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v")) passTrig=true;
-            else if (strstr((*triggersPassed).c_str(),"HLT_Mu17_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v")) passTrig=true;
-            else if (strstr((*triggersPassed).c_str(),"HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v")) passTrig=true;
-            else if (strstr((*triggersPassed).c_str(),"HLT_Mu23_TrkIsoVVL_Ele8_CaloIdL_TrackIdL_IsoVL_v")) passTrig=true;
-            else if (strstr((*triggersPassed).c_str(),"HLT_TripleMu_12_10_5_v")) passTrig=true;
-            else if (strstr((*triggersPassed).c_str(),"HLT_Ele16_Ele12_Ele8_CaloIdL_TrackIdL_v")) passTrig=true;
-            else if (strstr((*triggersPassed).c_str(),"HLT_DiMu9_Ele9_CaloIdL_TrackIdL_v")) passTrig=true;
-            else if (strstr((*triggersPassed).c_str(),"HLT_Mu8_DiEle12_CaloIdL_TrackIdL_v")) passTrig=true;
-            */
+            // cout << strstr(filename,"SingleMuon") << endl;
+            bool passSingleElectronTrig = false;
+            bool passSingleMuonTrig = false;
+            bool passDoubleMuonTrig = false;
+            bool passMuonEGTrig = false;
+            bool passDoubleEGTrig = false;
+            //if (strstr(filename,"SingleElectron")) {
+            if (strstr((*triggersPassed).c_str(),"HLT_Ele35_WPTight_Gsf_v")) {
+                passSingleElectronTrig=true;
+            } else if (strstr((*triggersPassed).c_str(),"HLT_Ele38_WPTight_Gsf_v")) {  
+                passSingleElectronTrig=true;
+            } else if (strstr((*triggersPassed).c_str(),"HLT_Ele40_WPTight_Gsf_v")) {
+                passSingleElectronTrig=true;
+            };
+            //};
+
+            if (strstr((*triggersPassed).c_str(),"HLT_IsoMu27")) {
+                passSingleMuonTrig=true;
+            };
+            
+            // double mu
+            if (strstr((*triggersPassed).c_str(),"HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8_v")) passDoubleMuonTrig=true;
+            else if (strstr((*triggersPassed).c_str(),"HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass8_v")) passDoubleMuonTrig=true;
+            else if (strstr((*triggersPassed).c_str(),"HLT_TripleMu_12_10_5_v")) passDoubleMuonTrig=true;
+            else if (strstr((*triggersPassed).c_str(),"HLT_TripleMu_10_5_5_DZ_v")) passDoubleMuonTrig=true;
+
+            // double eg
+            if (strstr((*triggersPassed).c_str(),"HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v")) passDoubleEGTrig=true;
+            else if (strstr((*triggersPassed).c_str(),"HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v")) passDoubleEGTrig=true;
+            else if (strstr((*triggersPassed).c_str(),"HLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v")) passDoubleEGTrig=true;
+            else if (strstr((*triggersPassed).c_str(),"HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v")) passDoubleEGTrig=true;
+            else if (strstr((*triggersPassed).c_str(),"HLT_DiMu9_Ele9_CaloIdL_TrackIdL_DZ_v")) passDoubleEGTrig=true;
+            else if (strstr((*triggersPassed).c_str(),"HLT_Mu8_DiEle12_CaloIdL_TrackIdL_v")) passDoubleEGTrig=true;
+            else if (strstr((*triggersPassed).c_str(),"HLT_Mu8_DiEle12_CaloIdL_TrackIdL_DZ_v")) passDoubleEGTrig=true;
+           
+            // muon eg 
+            if (strstr((*triggersPassed).c_str(),"HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_v")) passMuonEGTrig=true;
+            else if (strstr((*triggersPassed).c_str(),"HLT_DoubleEle33_CaloIdL_MW_v")) passMuonEGTrig=true;
+            else if (strstr((*triggersPassed).c_str(),"HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_v")) passMuonEGTrig=true;
+        
+            if (strstr(filename,"SingleElectron")) {
+                if (passSingleElectronTrig) passTrig=true;
+            } else if (strstr(filename,"SingleMuon")) {
+                if (!passSingleElectronTrig && passSingleMuonTrig) passTrig=true;
+            } else if (strstr(filename,"DoubleMuon")) {
+                if (!passSingleElectronTrig && !passSingleMuonTrig && passDoubleMuonTrig) passTrig=true;
+            } else if (strstr(filename,"DoubleEG")) {
+                if (!passSingleElectronTrig && !passSingleMuonTrig && !passDoubleMuonTrig && passDoubleEGTrig) passTrig=true;
+            } else if (strstr(filename,"MuonEG")) {
+                if (!passSingleElectronTrig && !passSingleMuonTrig && !passDoubleMuonTrig && !passDoubleEGTrig && passMuonEGTrig) passTrig=true;
+            };
         } else {
             passTrig = true;
             //pileupWeight = float(puweight(nInt));
             sumweight += pileupWeight*genWeight;
         }
 
+        if (!passTrig) continue;
         if((*lep_id).size()<4 || (*lep_pt).size()<4) continue;
         unsigned int Nlep = (*lep_id).size();
         if (debug) cout<<Nlep<<" leptons in total"<<endl;
@@ -206,21 +207,10 @@ void ReadTree(TTree* tree, TTree* & newtree, TString filename){
             vector<float> Z_pt, Z_eta, Z_phi, Z_mass;
             
             for(unsigned int i=0; i<Nlep; i++){
-        //        if ( (*lep_Sip)[i] > sip3dcut) continue;
-        //             if ((*lep_dxy)[i] > dxycut ) continue;
-        //            if ((*lep_dz)[i] > dzcut ) continue;
-        //             if ((*lep_pt)[i] < lep_ptcut) continue;
-                     if (abs((*lep_id)[i])!=13) continue;
                 for(unsigned int j=i+1; j<Nlep; j++){
                     // same flavor opposite charge
+                    if(((*lep_id)[i]+(*lep_id)[j])!=0) continue;
 
-         //            if ((*lep_Sip)[j] > sip3dcut) continue;
-        //             if ((*lep_dxy)[j] > dxycut ) continue;
-        //             if ((*lep_dz)[j] > dzcut ) continue;
-        //            if ((*lep_pt)[j] < lep_ptcut) continue;
-         //            if (abs((*lep_id)[j])!=13) continue;
-                     if(((*lep_id)[i]+(*lep_id)[j])!=0) continue;
-                   // 
                     TLorentzVector li, lj;
                     li.SetPtEtaPhiM((*lep_pt)[i],(*lep_eta)[i],(*lep_phi)[i],(*lep_mass)[i]);
                     lj.SetPtEtaPhiM((*lep_pt)[j],(*lep_eta)[j],(*lep_phi)[j],(*lep_mass)[j]);
@@ -404,8 +394,8 @@ void ReadTree(TTree* tree, TTree* & newtree, TString filename){
                         }
                         
                     }
-                    //if (!passSmartCut) continue; //Fix me
-            //        if (!passSmartCut) cout<<"smart cut not passed:"<<endl;
+                    
+                    //if (!passSmartCut) continue; //Fix me 
                     if (debug) cout<<" massZ1: "<<Z1.M()<<" massZ2: "<<Z2.M()<<endl;
                     if (Z1.M() < mZ1Low) continue;
                     if (Z1.M() > mZ1High) continue;
@@ -417,15 +407,14 @@ void ReadTree(TTree* tree, TTree* & newtree, TString filename){
                     
                     // Signal region if Z2 leptons are both tight ID Iso
                     bool signalRegion=true;
-//                    if ((*lep_RelIsoNoFSR)[Z2_lepindex[0]]>((abs((*lep_id)[Z2_lepindex[0]])==11) ? isoCutEl : isoCutMu)) signalRegion=false;
-///                    if ((*lep_RelIsoNoFSR)[Z2_lepindex[1]]>((abs((*lep_id)[Z2_lepindex[1]])==11) ? isoCutEl : isoCutMu)) signalRegion=false;
-                    if ((*lep_RelIsoNoFSR)[Z2_lepindex[0]]>((abs((*lep_id)[Z2_lepindex[0]])==11) ? isoCutEl : isoCutMu)) continue;
-                    if ((*lep_RelIsoNoFSR)[Z2_lepindex[1]]>((abs((*lep_id)[Z2_lepindex[1]])==11) ? isoCutEl : isoCutMu)) continue;
-//                    if (!((*lep_tightId)[Z2_lepindex[0]])) signalRegion=false; // checking tight lepton ID
-//                    if (!((*lep_tightId)[Z2_lepindex[1]])) signalRegion=false; // checking tight lepton ID
-                    if (!((*lep_tightId)[Z2_lepindex[0]])) continue;          
-                     if (!((*lep_tightId)[Z2_lepindex[1]])) continue; 
-                    if (debug) cout<<"signalRegion? "<<signalRegion<<endl;
+                    if ((*lep_RelIsoNoFSR)[Z2_lepindex[0]]>((abs((*lep_id)[Z2_lepindex[0]])==11) ? isoCutEl : isoCutMu)) signalRegion=false;
+                    if ((*lep_RelIsoNoFSR)[Z2_lepindex[1]]>((abs((*lep_id)[Z2_lepindex[1]])==11) ? isoCutEl : isoCutMu)) signalRegion=false;
+                    //if ((*lep_RelIsoNoFSR)[Z2_lepindex[0]]>((abs((*lep_id)[Z2_lepindex[0]])==11) ? isoCutEl : isoCutMu)) continue;
+                    //if ((*lep_RelIsoNoFSR)[Z2_lepindex[1]]>((abs((*lep_id)[Z2_lepindex[1]])==11) ? isoCutEl : isoCutMu)) continue;
+                    if (!((*lep_tightId)[Z2_lepindex[0]])) signalRegion=false; // checking tight lepton ID
+                    if (!((*lep_tightId)[Z2_lepindex[1]])) signalRegion=false; // checking tight lepton ID
+                    //if (!((*lep_tightId)[Z2_lepindex[0]])) continue;          
+                    //if (!((*lep_tightId)[Z2_lepindex[1]])) continue; 
                     
                     // Check if this candidate has the highest D_bkg_kin
                     vector<TLorentzVector> P4s;
@@ -525,7 +514,7 @@ void ReadTree(TTree* tree, TTree* & newtree, TString filename){
                             massZ1 = Z1Vec.M(); massZ2 = Z2Vec.M(); mass4l = HVec.M();
                             
                             if (debug) cout<<" new best candidate SR: mass4l: "<<HVec.M()<<endl;
-                            if (HVec.M()>m4lLowCut)  {
+                            if ((HVec.M()>m4lLowCut)&&(HVec.M()<m4lHighCut))  {
                                 foundHiggsCandidate=true;                    
                                 foundSRCandidate=true;
                             }
@@ -555,7 +544,7 @@ void ReadTree(TTree* tree, TTree* & newtree, TString filename){
                             massZ1 = Z1Vec.M(); massZ2 = Z2Vec.M(); mass4l = HVec.M(); pT4l = HVec.Pt();
                             
                             if (debug) cout<<" new best candidate CR: mass4l: "<<HVec.M()<<endl;
-                            if (HVec.M()>m4lLowCut) foundHiggsCandidate=true;                    
+                            if ((HVec.M()>m4lLowCut)&&(HVec.M()<m4lHighCut)) foundHiggsCandidate=true;                    
                         }
                     }
                     
@@ -568,7 +557,6 @@ void ReadTree(TTree* tree, TTree* & newtree, TString filename){
                 
         if ( (redoEventSelection&&foundHiggsCandidate) || passedZ4lSelection || passedZXCRSelection) {
 
-            if (debug) cout <<"AGAIN"<<endl;
             if (debug) cout<<" lep_Hindex[0]: "<<lep_Hindex[0]<<" lep_Hindex[1]: "<<lep_Hindex[1]
                            <<" lep_Hindex[2]: "<<lep_Hindex[2]<<" lep_Hindex[3]: "<<lep_Hindex[3]<<endl;
                     
