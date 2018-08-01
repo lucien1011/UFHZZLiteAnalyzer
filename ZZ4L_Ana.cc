@@ -94,7 +94,6 @@ void ReadTree(TTree* tree, TTree* & newtree, TString filename){
     
     ZZ4LAnalysisTree::setAddresses(tree, filename);
 
-
     float npass = 0.0;
     float sumweight = 0.0;
 
@@ -112,13 +111,10 @@ void ReadTree(TTree* tree, TTree* & newtree, TString filename){
         if (evt>lastevt) continue;
        
         if(evt%1000==0) cout<<"Event "<<evt<<"/"<<tree->GetEntries()<<endl;
-//        if(evt%5!=0) continue;
         tree->GetEntry(evt);
-//        cout<<"Run: "<<Run<<" Lumi: "<<LumiSect<<" Event: "<<Event<<endl;
         passTrig=false;
         if (isData) {
-            // single ele
-            // cout << strstr(filename,"SingleMuon") << endl;
+             //single ele
             bool passSingleElectronTrig = false;
             bool passSingleMuonTrig = false;
             bool passDoubleMuonTrig = false;
@@ -169,6 +165,7 @@ void ReadTree(TTree* tree, TTree* & newtree, TString filename){
             } else if (strstr(filename,"MuonEG")) {
                 if (!passSingleElectronTrig && !passSingleMuonTrig && !passDoubleMuonTrig && !passDoubleEGTrig && passMuonEGTrig) passTrig=true;
             };
+            //passTrig = true;
         } else {
             passTrig = true;
             //pileupWeight = float(puweight(nInt));
@@ -395,7 +392,7 @@ void ReadTree(TTree* tree, TTree* & newtree, TString filename){
                         
                     }
                     
-                    //if (!passSmartCut) continue; //Fix me 
+                    if (!passSmartCut) continue; //Fix me 
                     if (debug) cout<<" massZ1: "<<Z1.M()<<" massZ2: "<<Z2.M()<<endl;
                     if (Z1.M() < mZ1Low) continue;
                     if (Z1.M() > mZ1High) continue;
@@ -519,34 +516,34 @@ void ReadTree(TTree* tree, TTree* & newtree, TString filename){
                                 foundSRCandidate=true;
                             }
                         }
-                    } else if (!foundSRCandidate) { // Control regions get second priority
+                    } //else if (!foundSRCandidate) { // Control regions get second priority
                         
 
-                        if ( (bestCandMela && ((!same4l && D_bkg_kin_tmp>max_D_bkg_kin_CR) || (same4l && Z1DeltaM<=minZ1DeltaM_CR)))
-                             || (!bestCandMela && Z1DeltaM<=minZ1DeltaM_CR) ) {                 
-                            //if ( (!same4l && D_bkg_kin_tmp>max_D_bkg_kin_CR) || (same4l && Z1DeltaM<=minZ1DeltaM_CR) ) {
+                    //    if ( (bestCandMela && ((!same4l && D_bkg_kin_tmp>max_D_bkg_kin_CR) || (same4l && Z1DeltaM<=minZ1DeltaM_CR)))
+                    //         || (!bestCandMela && Z1DeltaM<=minZ1DeltaM_CR) ) {                 
+                    //        //if ( (!same4l && D_bkg_kin_tmp>max_D_bkg_kin_CR) || (same4l && Z1DeltaM<=minZ1DeltaM_CR) ) {
 
-                            max_D_bkg_kin_CR = D_bkg_kin_tmp;
-                            minZ1DeltaM_CR = Z1DeltaM;
-                    
-                            if (!bestCandMela && Z_Hindex[0]==Z1index && Z2SumPt<maxZ2SumPt_CR) continue;
-                            
-                            Z_Hindex[0] = Z1index;
-                            lep_Hindex[0] = Z1_lepindex[0];
-                            lep_Hindex[1] = Z1_lepindex[1];
-                            
-                            maxZ2SumPt_CR = Z2SumPt;
-                            Z_Hindex[1] = Z2index;
-                            lep_Hindex[2] = Z2_lepindex[0];
-                            lep_Hindex[3] = Z2_lepindex[1];
-                        
-                            Z1Vec = Z1; Z2Vec = Z2; HVec = Z1+Z2;                   
-                            massZ1 = Z1Vec.M(); massZ2 = Z2Vec.M(); mass4l = HVec.M(); pT4l = HVec.Pt();
-                            
-                            if (debug) cout<<" new best candidate CR: mass4l: "<<HVec.M()<<endl;
-                            if ((HVec.M()>m4lLowCut)&&(HVec.M()<m4lHighCut)) foundHiggsCandidate=true;                    
-                        }
-                    }
+                    //        max_D_bkg_kin_CR = D_bkg_kin_tmp;
+                    //        minZ1DeltaM_CR = Z1DeltaM;
+                    //
+                    //        if (!bestCandMela && Z_Hindex[0]==Z1index && Z2SumPt<maxZ2SumPt_CR) continue;
+                    //        
+                    //        Z_Hindex[0] = Z1index;
+                    //        lep_Hindex[0] = Z1_lepindex[0];
+                    //        lep_Hindex[1] = Z1_lepindex[1];
+                    //        
+                    //        maxZ2SumPt_CR = Z2SumPt;
+                    //        Z_Hindex[1] = Z2index;
+                    //        lep_Hindex[2] = Z2_lepindex[0];
+                    //        lep_Hindex[3] = Z2_lepindex[1];
+                    //    
+                    //        Z1Vec = Z1; Z2Vec = Z2; HVec = Z1+Z2;                   
+                    //        massZ1 = Z1Vec.M(); massZ2 = Z2Vec.M(); mass4l = HVec.M(); pT4l = HVec.Pt();
+                    //        
+                    //        if (debug) cout<<" new best candidate CR: mass4l: "<<HVec.M()<<endl;
+                    //        if ((HVec.M()>m4lLowCut)&&(HVec.M()<m4lHighCut)) foundHiggsCandidate=true;                    
+                    //    }
+                    //}
                     
                     if (debug) cout<<"Z_Hindex[0]: "<<Z_Hindex[0]<<" lep_Hindex[0]: "<<lep_Hindex[0]<<" lep_Hindex[1]: "<<lep_Hindex[1]
                                    <<"Z_Hindex[1]: "<<Z_Hindex[1]<<" lep_Hindex[2]: "<<lep_Hindex[2]<<" lep_Hindex[3]: "<<lep_Hindex[3]<<endl;
@@ -555,7 +552,8 @@ void ReadTree(TTree* tree, TTree* & newtree, TString filename){
             } // Zi
         }
                 
-        if ( (redoEventSelection&&foundHiggsCandidate) || passedZ4lSelection || passedZXCRSelection) {
+        //if ( (redoEventSelection&&foundHiggsCandidate) || passedZ4lSelection || passedZXCRSelection) {
+        if (redoEventSelection&&foundHiggsCandidate) {
 
             if (debug) cout<<" lep_Hindex[0]: "<<lep_Hindex[0]<<" lep_Hindex[1]: "<<lep_Hindex[1]
                            <<" lep_Hindex[2]: "<<lep_Hindex[2]<<" lep_Hindex[3]: "<<lep_Hindex[3]<<endl;

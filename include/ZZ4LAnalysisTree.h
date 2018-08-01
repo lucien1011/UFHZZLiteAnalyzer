@@ -61,6 +61,7 @@ using namespace std;
 // output tree
 //float me_qqZZ_MCFM;  
 bool passedFullSelection, passedZ4lSelection;
+bool passedZ1LSelection;
 bool passedZXCRSelection, passedZ4lZXCRSelection;
 bool passSmartCut;
 int nZXCRFailedLeptons;
@@ -245,6 +246,7 @@ namespace ZZ4LAnalysisTree {
 
         tree->SetBranchStatus("lep_Hindex",1);
         tree->SetBranchStatus("passedZ4lSelection",1);
+        tree->SetBranchStatus("passedZ1LSelection",1);
         tree->SetBranchStatus("passedFullSelection",1);
         tree->SetBranchStatus("passedZXCRSelection",1);
         tree->SetBranchStatus("nZXCRFailedLeptons",1);

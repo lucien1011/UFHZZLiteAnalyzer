@@ -15,6 +15,7 @@ using namespace std;
 
 void SetNewTree(TTree* newtree);
 void ReadTree(TTree* tree, TTree* & newtree, TString filename);
+void SkimTree(TTree* tree, TTree* & newtree, TString filename);
 
 TString filename;
 bool debug;
@@ -78,7 +79,8 @@ int main(int argc, char *argv[])
 
   if(debug)cout<<"start reading tree "<<endl;
 
-  ReadTree(tree, newtree, filename);
+  //ReadTree(tree, newtree, filename);
+  SkimTree(tree, newtree, filename);
 
   if(debug)cout<<"end reading tree"<<endl;
 
@@ -89,6 +91,87 @@ int main(int argc, char *argv[])
 
 }
 
+void SkimTree(TTree* tree, TTree* & newtree, TString filename){
+
+    ZZ4LAnalysisTree::setAddresses(tree, filename);
+    
+    int firstevt=0; int lastevt=tree->GetEntries();
+    if (job>0) {
+        firstevt = tree->GetEntries()*(job-1)/njobs;
+        lastevt = tree->GetEntries()*(job)/njobs-1;
+    }
+    
+    for(int evt=0; evt < tree->GetEntries(); evt++) { //event loop
+        
+        if (evt<firstevt) continue;
+        if (evt>lastevt) continue;
+       
+        if(evt%1000==0) cout<<"Event "<<evt<<"/"<<tree->GetEntries()<<endl;
+        tree->GetEntry(evt);
+
+        if (!passedZ1LSelection) continue; 
+
+        passTrig=false;
+        if (isData) {
+            bool passSingleElectronTrig = false;
+            bool passSingleMuonTrig = false;
+            bool passDoubleMuonTrig = false;
+            bool passMuonEGTrig = false;
+            bool passDoubleEGTrig = false;
+            if (strstr((*triggersPassed).c_str(),"HLT_Ele35_WPTight_Gsf_v")) {
+                passSingleElectronTrig=true;
+            } else if (strstr((*triggersPassed).c_str(),"HLT_Ele38_WPTight_Gsf_v")) {  
+                passSingleElectronTrig=true;
+            } else if (strstr((*triggersPassed).c_str(),"HLT_Ele40_WPTight_Gsf_v")) {
+                passSingleElectronTrig=true;
+            };
+
+            if (strstr((*triggersPassed).c_str(),"HLT_IsoMu27")) {
+                passSingleMuonTrig=true;
+            };
+            
+            // double mu
+            if (strstr((*triggersPassed).c_str(),"HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8_v")) passDoubleMuonTrig=true;
+            else if (strstr((*triggersPassed).c_str(),"HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass8_v")) passDoubleMuonTrig=true;
+            else if (strstr((*triggersPassed).c_str(),"HLT_TripleMu_12_10_5_v")) passDoubleMuonTrig=true;
+            else if (strstr((*triggersPassed).c_str(),"HLT_TripleMu_10_5_5_DZ_v")) passDoubleMuonTrig=true;
+
+            // double eg
+            if (strstr((*triggersPassed).c_str(),"HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v")) passDoubleEGTrig=true;
+            else if (strstr((*triggersPassed).c_str(),"HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v")) passDoubleEGTrig=true;
+            else if (strstr((*triggersPassed).c_str(),"HLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v")) passDoubleEGTrig=true;
+            else if (strstr((*triggersPassed).c_str(),"HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v")) passDoubleEGTrig=true;
+            else if (strstr((*triggersPassed).c_str(),"HLT_DiMu9_Ele9_CaloIdL_TrackIdL_DZ_v")) passDoubleEGTrig=true;
+            else if (strstr((*triggersPassed).c_str(),"HLT_Mu8_DiEle12_CaloIdL_TrackIdL_v")) passDoubleEGTrig=true;
+            else if (strstr((*triggersPassed).c_str(),"HLT_Mu8_DiEle12_CaloIdL_TrackIdL_DZ_v")) passDoubleEGTrig=true;
+           
+            // muon eg 
+            if (strstr((*triggersPassed).c_str(),"HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_v")) passMuonEGTrig=true;
+            else if (strstr((*triggersPassed).c_str(),"HLT_DoubleEle33_CaloIdL_MW_v")) passMuonEGTrig=true;
+            else if (strstr((*triggersPassed).c_str(),"HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_v")) passMuonEGTrig=true;
+        
+            if (strstr(filename,"SingleElectron")) {
+                if (passSingleElectronTrig) passTrig=true;
+            } else if (strstr(filename,"SingleMuon")) {
+                if (!passSingleElectronTrig && passSingleMuonTrig) passTrig=true;
+            } else if (strstr(filename,"DoubleMuon")) {
+                if (!passSingleElectronTrig && !passSingleMuonTrig && passDoubleMuonTrig) passTrig=true;
+            } else if (strstr(filename,"DoubleEG")) {
+                if (!passSingleElectronTrig && !passSingleMuonTrig && !passDoubleMuonTrig && passDoubleEGTrig) passTrig=true;
+            } else if (strstr(filename,"MuonEG")) {
+                if (!passSingleElectronTrig && !passSingleMuonTrig && !passDoubleMuonTrig && !passDoubleEGTrig && passMuonEGTrig) passTrig=true;
+            };
+        } else {
+            passTrig = true;
+            //pileupWeight = float(puweight(nInt));
+            //sumweight += pileupWeight*genWeight;
+        }
+
+        if (!passTrig) continue;
+
+        newtree->Fill();
+    }
+}
 
 void ReadTree(TTree* tree, TTree* & newtree, TString filename){
     
@@ -340,6 +423,7 @@ void SetNewTree(TTree* newtree){
     newtree->Branch("passedTrig",&passedTrig,"passedTrig/O");
     newtree->Branch("passedFullSelection",&passedFullSelection,"passedFullSelection/O");
     newtree->Branch("passedZ4lSelection",&passedZ4lSelection,"passedZ4lSelection/O");
+    newtree->Branch("passedZ1LSelection",&passedZ1LSelection,"passedZ1LSelection/O");
     newtree->Branch("passedZXCRSelection",&passedZXCRSelection,"passedZXCRSelection/O");
     newtree->Branch("passSmartCut",&passSmartCut,"passSmartCut/O");
     newtree->Branch("nZXCRFailedLeptons",&nZXCRFailedLeptons,"nZXCRFailedLeptons/I");

@@ -5,13 +5,14 @@
 using namespace std;  
 
 bool isData;
-bool bestCandMela=false;
+bool bestCandMela=true;
 bool redoEventSelection=true;
 bool redoJets=true;
 bool redoMela=false;
 bool redoEbE=false;
-double m4lLowCut=105.0;
-double mZ2Low=4.0;
+double m4lLowCut=70.0;
+double m4lHighCut=999999.;
+double mZ2Low=12.0;
 float dxycut=0.5;
 float dzcut=1.0;
 double sip3dcut=4.0;
