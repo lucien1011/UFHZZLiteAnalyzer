@@ -264,6 +264,7 @@ namespace ZZ4LAnalysisTree {
        
         tree->SetBranchAddress("lep_Hindex",&lep_Hindex);
         tree->SetBranchAddress("passedZ4lSelection",&passedZ4lSelection);
+        tree->SetBranchAddress("passedZ1LSelection",&passedZ1LSelection);
         tree->SetBranchAddress("passedFullSelection",&passedFullSelection);
         tree->SetBranchAddress("passedZXCRSelection",&passedZXCRSelection);
         tree->SetBranchAddress("nZXCRFailedLeptons",&nZXCRFailedLeptons);

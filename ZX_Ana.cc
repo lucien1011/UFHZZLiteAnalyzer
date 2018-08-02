@@ -71,11 +71,13 @@ int main(int argc, char *argv[])
 
   TString name = outfilename;
   TFile* tmpFile =  new TFile(name+".root","RECREATE");
-  TTree* newtree = new TTree("passedEvents","passedEvents");
+  //TTree* newtree = new TTree("passedEvents","passedEvents");
+  TTree* newtree = tree->CloneTree(0);
 
   if(debug)cout<<"start setting new tree "<<endl;
 
-  SetNewTree(newtree);
+  newtree->CopyAddresses(tree);
+  //SetNewTree(newtree);
 
   if(debug)cout<<"start reading tree "<<endl;
 
@@ -110,64 +112,6 @@ void SkimTree(TTree* tree, TTree* & newtree, TString filename){
         tree->GetEntry(evt);
 
         if (!passedZ1LSelection) continue; 
-
-        passTrig=false;
-        if (isData) {
-            bool passSingleElectronTrig = false;
-            bool passSingleMuonTrig = false;
-            bool passDoubleMuonTrig = false;
-            bool passMuonEGTrig = false;
-            bool passDoubleEGTrig = false;
-            if (strstr((*triggersPassed).c_str(),"HLT_Ele35_WPTight_Gsf_v")) {
-                passSingleElectronTrig=true;
-            } else if (strstr((*triggersPassed).c_str(),"HLT_Ele38_WPTight_Gsf_v")) {  
-                passSingleElectronTrig=true;
-            } else if (strstr((*triggersPassed).c_str(),"HLT_Ele40_WPTight_Gsf_v")) {
-                passSingleElectronTrig=true;
-            };
-
-            if (strstr((*triggersPassed).c_str(),"HLT_IsoMu27")) {
-                passSingleMuonTrig=true;
-            };
-            
-            // double mu
-            if (strstr((*triggersPassed).c_str(),"HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8_v")) passDoubleMuonTrig=true;
-            else if (strstr((*triggersPassed).c_str(),"HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass8_v")) passDoubleMuonTrig=true;
-            else if (strstr((*triggersPassed).c_str(),"HLT_TripleMu_12_10_5_v")) passDoubleMuonTrig=true;
-            else if (strstr((*triggersPassed).c_str(),"HLT_TripleMu_10_5_5_DZ_v")) passDoubleMuonTrig=true;
-
-            // double eg
-            if (strstr((*triggersPassed).c_str(),"HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v")) passDoubleEGTrig=true;
-            else if (strstr((*triggersPassed).c_str(),"HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v")) passDoubleEGTrig=true;
-            else if (strstr((*triggersPassed).c_str(),"HLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v")) passDoubleEGTrig=true;
-            else if (strstr((*triggersPassed).c_str(),"HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v")) passDoubleEGTrig=true;
-            else if (strstr((*triggersPassed).c_str(),"HLT_DiMu9_Ele9_CaloIdL_TrackIdL_DZ_v")) passDoubleEGTrig=true;
-            else if (strstr((*triggersPassed).c_str(),"HLT_Mu8_DiEle12_CaloIdL_TrackIdL_v")) passDoubleEGTrig=true;
-            else if (strstr((*triggersPassed).c_str(),"HLT_Mu8_DiEle12_CaloIdL_TrackIdL_DZ_v")) passDoubleEGTrig=true;
-           
-            // muon eg 
-            if (strstr((*triggersPassed).c_str(),"HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_v")) passMuonEGTrig=true;
-            else if (strstr((*triggersPassed).c_str(),"HLT_DoubleEle33_CaloIdL_MW_v")) passMuonEGTrig=true;
-            else if (strstr((*triggersPassed).c_str(),"HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_v")) passMuonEGTrig=true;
-        
-            if (strstr(filename,"SingleElectron")) {
-                if (passSingleElectronTrig) passTrig=true;
-            } else if (strstr(filename,"SingleMuon")) {
-                if (!passSingleElectronTrig && passSingleMuonTrig) passTrig=true;
-            } else if (strstr(filename,"DoubleMuon")) {
-                if (!passSingleElectronTrig && !passSingleMuonTrig && passDoubleMuonTrig) passTrig=true;
-            } else if (strstr(filename,"DoubleEG")) {
-                if (!passSingleElectronTrig && !passSingleMuonTrig && !passDoubleMuonTrig && passDoubleEGTrig) passTrig=true;
-            } else if (strstr(filename,"MuonEG")) {
-                if (!passSingleElectronTrig && !passSingleMuonTrig && !passDoubleMuonTrig && !passDoubleEGTrig && passMuonEGTrig) passTrig=true;
-            };
-        } else {
-            passTrig = true;
-            //pileupWeight = float(puweight(nInt));
-            //sumweight += pileupWeight*genWeight;
-        }
-
-        if (!passTrig) continue;
 
         newtree->Fill();
     }
@@ -469,33 +413,8 @@ void SetNewTree(TTree* newtree){
     newtree->Branch("pT4l",&pT4l,"pT4l/F");
     newtree->Branch("massZ1",&massZ1,"massZ1/F");
     newtree->Branch("massZ2",&massZ2,"massZ2/F"); 
-    newtree->Branch("njets_pt30_eta4p7",&njets_pt30_eta4p7,"njets_pt30_eta4p7/I");
-    newtree->Branch("njets_pt30_eta2p5",&njets_pt30_eta2p5,"njets_pt30_eta2p5/I");
     newtree->Branch("met",&met,"met/F"); 
     newtree->Branch("me_qqZZ_MCFM",&me_qqZZ_MCFM,"me_qqZZ_MCFM/F");
-    newtree->Branch("pTj1",&pTj1,"pTj1/F");
-    newtree->Branch("etaj1",&etaj1,"etaj1/F");
-    newtree->Branch("qgj1",&qgj1,"qgj1/F");
-    newtree->Branch("pTj2",&pTj2,"pTj2/F");
-    newtree->Branch("etaj2",&etaj2,"etaj2/F");
-    newtree->Branch("qgj2",&qgj2,"qgj1/F");
-
-    newtree->Branch("pt_leadingjet_pt30_eta4p7",&pTj1,"pt_leadingjet_pt30_eta4p7/F");
-    newtree->Branch("pt_leadingjet_pt30_eta2p5",&pTj1_2p5,"pt_leadingjet_pt30_eta2p5/F");
-
-    newtree->Branch("D_bkg_kin", &D_bkg_kin, "D_bkg_kin/F");
-    newtree->Branch("D_bkg", &D_bkg, "D_bkg/F");
-    newtree->Branch("Dgg10_VAMCFM", &Dgg10_VAMCFM, "Dgg10_VAMCFM/F");
-    newtree->Branch("D_g4", &D_g4, "D_g4/F");
-    newtree->Branch("D_VBF", &D_VBF, "D_VBF/F");
-    newtree->Branch("D_VBF1j",&D_VBF1j,"D_VBF1j/F");
-    newtree->Branch("D_HadWH",&D_HadWH,"D_HadWH/F");
-    newtree->Branch("D_HadZH",&D_HadZH,"D_HadZH/F");
-    newtree->Branch("D_VBF_QG",&D_VBF_QG,"D_VBF_QG/F");
-    newtree->Branch("D_VBF1j_QG",&D_VBF1j_QG,"D_VBF1j_QG/F");
-    newtree->Branch("D_HadWH_QG",&D_HadWH_QG,"D_HadWH_QG/F");
-    newtree->Branch("D_HadZH_QG",&D_HadZH_QG,"D_HadZH_QG/F");
-    newtree->Branch("EventCat",&EventCat,"EventCat/I");
     newtree->Branch("massZ1_Z1L",&massZ1_Z1L,"massZ1_Z1L/F");
     newtree->Branch("mass3l",&mass3l,"mass3l/F");
  

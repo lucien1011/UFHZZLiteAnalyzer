@@ -1,29 +1,29 @@
 import os, time
 
-isMC = False
+isMC = True
 
 # ____________________________________________________________________________________________________________ ||
 mcInfos = [
-        #[
-        #    'root://cmsio5.rc.ufl.edu//store/user/klo/DarkPhoton_Moriond17_NTuple/BkgMC_Run2017/GluGluHToZZTo4L_M125_13TeV_powheg2_JHUGenV7011_pythia8/crab_GluGluHToZZTo4L_M125_13TeV_powheg2_JHUGenV7011_pythia8/180702_104442/0000/',
-        #    ["GluGluHToZZTo4L_M125_13TeV_powheg2_JHUGenV7011_pythia8_%s"%i for i in range(1,11) if i != 9],
-        #],
-        #[
-        #    'root://cmsio5.rc.ufl.edu//store/user/klo/DarkPhoton_Moriond17_NTuple/BkgMC_Early2017/VBF_HToZZTo4L_M125_13TeV_powheg2_JHUGenV7011_pythia8/crab_VBF_HToZZTo4L_M125_13TeV_powheg2_JHUGenV7011_pythia8/180702_114215/0000/',
-        #    ["VBF_HToZZTo4L_M125_13TeV_powheg2_JHUGenV7011_pythia8_%s"%i for i in range(1,7)],
-        #],
-        #[
-        #    'root://cmsio5.rc.ufl.edu//store/user/klo/DarkPhoton_Moriond17_NTuple/BkgMC_Early2017/WplusH_HToZZTo4L_M125_13TeV_powheg2-minlo-HWJ_JHUGenV7011_pythia8/crab_WplusH_HToZZTo4L_M125_13TeV_powheg2-minlo-HWJ_JHUGenV7011_pythia8/180702_114340/0000/',
-        #    ["WplusH_HToZZTo4L_M125_13TeV_powheg2-minlo-HWJ_JHUGenV7011_pythia8_%s"%i for i in range(1,7) if i != 2],
-        #],
-        #[
-        #    'root://cmsio5.rc.ufl.edu//store/user/klo/DarkPhoton_Moriond17_NTuple/BkgMC_Early2017/WminusH_HToZZTo4L_M125_13TeV_powheg2-minlo-HWJ_JHUGenV7011_pythia8/crab_WminusH_HToZZTo4L_M125_13TeV_powheg2-minlo-HWJ_JHUGenV7011_pythia8/180702_134408/0000/',
-        #    ["WminusH_HToZZTo4L_M125_13TeV_powheg2-minlo-HWJ_JHUGenV7011_pythia8_%s"%i for i in range(2,5)],
-        #],
-        #[
-        #    'root://cmsio5.rc.ufl.edu//store/user/klo/DarkPhoton_Moriond17_NTuple/BkgMC_Early2017/ZH_HToZZ_4LFilter_M125_13TeV_powheg2-minlo-HZJ_JHUGenV7011_pythia8/crab_ZH_HToZZ_4LFilter_M125_13TeV_powheg2-minlo-HZJ_JHUGenV7011_pythia8/180702_134649/0000/',
-        #    ["ZH_HToZZ_4LFilter_M125_13TeV_powheg2-minlo-HZJ_JHUGenV7011_pythia8_%s"%i for i in range(1,20)],
-        #],
+        [
+            'root://cmsio5.rc.ufl.edu//store/user/klo/DarkPhoton_Moriond17_NTuple/BkgMC_Run2017/GluGluHToZZTo4L_M125_13TeV_powheg2_JHUGenV7011_pythia8/crab_GluGluHToZZTo4L_M125_13TeV_powheg2_JHUGenV7011_pythia8/180702_104442/0000/',
+            ["GluGluHToZZTo4L_M125_13TeV_powheg2_JHUGenV7011_pythia8_%s"%i for i in range(1,11) if i != 9],
+        ],
+        [
+            'root://cmsio5.rc.ufl.edu//store/user/klo/DarkPhoton_Moriond17_NTuple/BkgMC_Early2017/VBF_HToZZTo4L_M125_13TeV_powheg2_JHUGenV7011_pythia8/crab_VBF_HToZZTo4L_M125_13TeV_powheg2_JHUGenV7011_pythia8/180702_114215/0000/',
+            ["VBF_HToZZTo4L_M125_13TeV_powheg2_JHUGenV7011_pythia8_%s"%i for i in range(1,7)],
+        ],
+        [
+            'root://cmsio5.rc.ufl.edu//store/user/klo/DarkPhoton_Moriond17_NTuple/BkgMC_Early2017/WplusH_HToZZTo4L_M125_13TeV_powheg2-minlo-HWJ_JHUGenV7011_pythia8/crab_WplusH_HToZZTo4L_M125_13TeV_powheg2-minlo-HWJ_JHUGenV7011_pythia8/180702_114340/0000/',
+            ["WplusH_HToZZTo4L_M125_13TeV_powheg2-minlo-HWJ_JHUGenV7011_pythia8_%s"%i for i in range(1,7) if i != 2],
+        ],
+        [
+            'root://cmsio5.rc.ufl.edu//store/user/klo/DarkPhoton_Moriond17_NTuple/BkgMC_Early2017/WminusH_HToZZTo4L_M125_13TeV_powheg2-minlo-HWJ_JHUGenV7011_pythia8/crab_WminusH_HToZZTo4L_M125_13TeV_powheg2-minlo-HWJ_JHUGenV7011_pythia8/180702_134408/0000/',
+            ["WminusH_HToZZTo4L_M125_13TeV_powheg2-minlo-HWJ_JHUGenV7011_pythia8_%s"%i for i in range(2,5)],
+        ],
+        [
+            'root://cmsio5.rc.ufl.edu//store/user/klo/DarkPhoton_Moriond17_NTuple/BkgMC_Early2017/ZH_HToZZ_4LFilter_M125_13TeV_powheg2-minlo-HZJ_JHUGenV7011_pythia8/crab_ZH_HToZZ_4LFilter_M125_13TeV_powheg2-minlo-HZJ_JHUGenV7011_pythia8/180702_134649/0000/',
+            ["ZH_HToZZ_4LFilter_M125_13TeV_powheg2-minlo-HZJ_JHUGenV7011_pythia8_%s"%i for i in range(1,20)],
+        ],
         [
             '/raid/raid9/ahmad/RUN2_Analyzer/v2/CMSSW_8_0_26_patch1/src/liteUFHZZ4LAnalyzer/Ntuples_Input/2017/',
             ["ZZTo4L_13TeV_powheg_pythia8_RunIIFall17MiniAOD-94X_mc2017_realistic_v10_ext1-v1",],
@@ -55,18 +55,17 @@ dataInfos = [
         #    '/raid/raid9/ahmad/RUN2_Analyzer/v2/CMSSW_8_0_26_patch1/src/liteUFHZZ4LAnalyzer/Ntuples_Input/2017/',
         #    ['SingleDoubleMuon_Run2017-17Nov2017-v1_NoDuplicates'],
         #],
-        #[
-        #    'root://cmsio5.rc.ufl.edu//store/user/t2/users/klo/Higgs/DarkZ/NTuples/Data_Run2017/',
-        #    [
-        #        'SingleMuon_Run2017-17Nov2017-v1',
-        #        'DoubleMuon_Run2017-17Nov2017-v1',
-        #    ],
-        #],
+        [
+            'root://cmsio5.rc.ufl.edu//store/user/t2/users/klo/Higgs/DarkZ/NTuples/Data_Run2017/',
+            [
+                'SingleMuon_Run2017-17Nov2017-v1',
+                'DoubleMuon_Run2017-17Nov2017-v1',
+            ],
+        ],
         [
             'root://cmsio5.rc.ufl.edu//store/user/t2/users/klo/Higgs/DarkZ/NTuples/Data_Run2017/',
             ['MuonEG-DoubleEG-SingleElectron_Run2017-17Nov2017-v1',]
         ],
-
         #[   
         #    'root://cmsio5.rc.ufl.edu//store/user/t2/users/dsperka/Run2/Zprime/2017/rootfiles_Data_Apr16/',
         #    ['SingleMuon_Run2017',],
@@ -125,8 +124,11 @@ infos            = dataInfos if not isMC else mcInfos
 #outputDir       = "/raid/raid7/lucien/Higgs/DarkZ-NTuple/20180730/SkimTree_Run2017Data/DarkZ_m4l105To140_mZ140To120_mZ24To120/"
 #outputDir       = "/raid/raid7/lucien/Higgs/DarkZ-NTuple/20180730/SkimTree_BkgMC/DarkZ_m4l105To140_mZ140To120_mZ24To120/"
 #outputDir       = "/raid/raid7/lucien/Higgs/DarkZ-NTuple/20180801/Sync_Run2017Data_MyInput_v1/"
-outputDir       = "/raid/raid7/lucien/Higgs/DarkZ-NTuple/20180801/Sync_Run2017MC_PickOneEvent_v1/"
+#outputDir       = "/raid/raid7/lucien/Higgs/DarkZ-NTuple/20180801/Sync_Run2017MC_PickOneEvent_v1/"
 #outputDir       = "/raid/raid7/lucien/Higgs/DarkZ-NTuple/20180729/SkimTree_Run2017Data/"
+#outputDir       = "/raid/raid7/lucien/Higgs/DarkZ-NTuple/20180802/Sync_Run2017Data_v1/"
+#outputDir       = "/raid/raid7/lucien/Higgs/DarkZ-NTuple/20180802/Sync_Run2017MC_v1_m4l105To140_mZ140To120_mZ24To120/"
+outputDir       = "/raid/raid7/lucien/Higgs/DarkZ-NTuple/20180802/Sync_Run2017Data_v1_m4l105To140_mZ140To120_mZ24To120/"
 
 if not os.path.exists(os.path.abspath(outputDir)):
     os.makedirs(outputDir)

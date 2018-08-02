@@ -3,10 +3,9 @@ import os, time
 # ____________________________________________________________________________________________________________ ||
 mcInfos = [
         [
-            'root://cmsio5.rc.ufl.edu//store/user/t2/users/dsperka/Run2/HZZ4l/SubmitArea_13TeV/rootfiles_MC80X_2lskim_M17_Aug18/',
+            'root://cmsio5.rc.ufl.edu//store/user/t2/users/klo/Higgs/DarkZ/NTuples/ZPlusX_Early2017_v1/',
             [   
-                "DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8_RunIISummer16MiniAODv2",
-                "DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8_RunIISummer16MiniAODv2",
+                "DYJetsToLL_M50",
             ],
         ],
 
@@ -38,8 +37,8 @@ dataInfos = [
 
 # ____________________________________________________________________________________________________________ ||
 # Configuration
-infos            = dataInfos
-outputDir       = "/raid/raid7/lucien/Higgs/DarkZ-NTuple/20180730/SkimTree_Run2016Data/DarkZ_Z1LSelection/"
+infos            = mcInfos
+outputDir       = "/raid/raid7/lucien/Higgs/DarkZ-NTuple/20180802/SkimTree_Z1LSelection_test/"
 
 if not os.path.exists(os.path.abspath(outputDir)):
     os.makedirs(outputDir)
