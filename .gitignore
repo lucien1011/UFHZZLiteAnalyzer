@@ -1,4 +1,10 @@
 *.o
 *.root
-ZZ4L_Ana.exe
+*.exe
 *.sw*
+br.sm1
+br.sm2
+ffwarn.dat
+input.DAT
+process.DAT
+Pdfdata/
