@@ -662,6 +662,10 @@ void ReadTree(TTree* tree, TTree* & newtree, TString filename){
             P4s.push_back(Lep3); P4s.push_back(Lep4);
             tmpIDs.push_back(idL1); tmpIDs.push_back(idL2);
             tmpIDs.push_back(idL3); tmpIDs.push_back(idL4);
+            lep_Hindex_stdvec->push_back(lep_Hindex[0]);
+            lep_Hindex_stdvec->push_back(lep_Hindex[1]);
+            lep_Hindex_stdvec->push_back(lep_Hindex[2]);
+            lep_Hindex_stdvec->push_back(lep_Hindex[3]);
 
             TLorentzVector higgs_undec = Lep1+Lep2+Lep3+Lep4;   
 
@@ -702,6 +706,16 @@ void SetNewTree(TTree* newtree){
     newtree->Branch("k_qqZZ_qcd_M",&k_qqZZ_qcd_M,"k_qqZZ_qcd_M/F");
     newtree->Branch("k_qqZZ_ewk",&k_qqZZ_ewk,"k_qqZZ_ewk/F");
     newtree->Branch("k_ggZZ",&k_ggZZ,"k_ggZZ/F");
+    
+    newtree->Branch("lep_id",&lep_id);
+    newtree->Branch("lep_pt",&lep_pt);
+    newtree->Branch("lep_eta",&lep_eta);
+    newtree->Branch("lep_phi",&lep_phi);
+    newtree->Branch("lep_mass",&lep_mass);
+    newtree->Branch("lep_tightId",&lep_tightId);
+    newtree->Branch("lep_RelIso",&lep_RelIso);
+    newtree->Branch("lep_RelIsoNoFSR",&lep_RelIsoNoFSR);
+    newtree->Branch("lep_Hindex",&lep_Hindex_stdvec);
 
     newtree->Branch("pTL1",&pTL1,"pTL1/F");
     newtree->Branch("pTL2",&pTL2,"pTL2/F");

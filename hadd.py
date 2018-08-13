@@ -6,18 +6,18 @@ parser.add_argument('--inputDir',action='store')
 option = parser.parse_args()
 
 samples = [
-        #"GluGluHToZZ",
-        #"VBF",
+        "GluGluHToZZ",
+        "VBF",
         "WminusH",
         "WplusH",
-        #"ZH",
-        #"ZZTo4L_13TeV_powheg",
-        #"GluGluToContinToZZTo2e2mu",
-        #"GluGluToContinToZZTo2e2tau",
-        #"GluGluToContinToZZTo2mu2tau",
-        #"GluGluToContinToZZTo4mu",
-        #"GluGluToContinToZZTo4e",
-        #"GluGluToContinToZZTo4tau",
+        "ZH",
+        "ZZTo4L_13TeV_powheg",
+        "GluGluToContinToZZTo2e2mu",
+        "GluGluToContinToZZTo2e2tau",
+        "GluGluToContinToZZTo2mu2tau",
+        "GluGluToContinToZZTo4mu",
+        "GluGluToContinToZZTo4e",
+        "GluGluToContinToZZTo4tau",
         ]
 
 for sample in samples:

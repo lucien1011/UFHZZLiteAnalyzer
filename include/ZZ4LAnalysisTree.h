@@ -131,6 +131,7 @@ std::vector<float>* lep_mass;
 std::vector<float> *lep_pt; std::vector<float> *lep_eta; std::vector<float> *lep_phi;
 std::vector<float>* lepFSR_mass;
 std::vector<float> *lepFSR_pt; std::vector<float> *lepFSR_eta; std::vector<float> *lepFSR_phi;
+std::vector<int> *lep_Hindex_stdvec;
 
 std::vector<int> *lep_tightId;
 std::vector<int> *lep_ecalDriven;
@@ -171,8 +172,8 @@ namespace ZZ4LAnalysisTree {
         tree->SetBranchStatus("passedFiducialSelection",1);
         tree->SetBranchStatus("lep_id",1);
         tree->SetBranchStatus("lep_Sip",1);
-        tree->SetBranchStatus("lep_dxy",1);
-        tree->SetBranchStatus("lep_dz",1);
+        //tree->SetBranchStatus("lep_dxy",1);
+        //tree->SetBranchStatus("lep_dz",1);
         tree->SetBranchStatus("lep_tightId",1);
         tree->SetBranchStatus("lep_ecalDriven",1);
         tree->SetBranchStatus("lep_pt",1);

@@ -111,7 +111,8 @@ void SkimTree(TTree* tree, TTree* & newtree, TString filename){
         if(evt%1000==0) cout<<"Event "<<evt<<"/"<<tree->GetEntries()<<endl;
         tree->GetEntry(evt);
 
-        if (!passedZ1LSelection) continue; 
+        // if (!passedZ1LSelection) continue; 
+        if (!passedZXCRSelection) continue; 
 
         newtree->Fill();
     }
