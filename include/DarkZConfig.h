@@ -5,7 +5,7 @@
 using namespace std;  
 
 bool isData;
-bool bestCandMela=true;
+bool bestCandMela=false;
 bool redoJets=true;
 bool redoEbE=false;
 double m4lLowCut=70.0;

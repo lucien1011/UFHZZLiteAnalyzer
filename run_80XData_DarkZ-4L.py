@@ -53,7 +53,7 @@ dataInfos = [
 # ____________________________________________________________________________________________________________ ||
 # Configuration
 infos            = dataInfos if not isMC else mcInfos
-outputDir       = "/raid/raid7/lucien/Higgs/DarkZ-NTuple/20180808/SkimTree_HIG-16-041_Run2016Data_v1/"
+outputDir       = "/raid/raid7/lucien/Higgs/DarkZ-NTuple/20180808/SkimTree_DarkPhoton_Run2016Data_v1/"
 
 if not os.path.exists(os.path.abspath(outputDir)):
     os.makedirs(outputDir)

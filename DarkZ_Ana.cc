@@ -105,11 +105,11 @@ void ReadTree(TTree* tree, TTree* & newtree, TString filename){
         passTrig=false;
         if (isData) {
              //single ele
-            bool passSingleElectronTrig = false;
-            bool passSingleMuonTrig = false;
-            bool passDoubleMuonTrig = false;
-            bool passMuonEGTrig = false;
-            bool passDoubleEGTrig = false;
+            //bool passSingleElectronTrig = false;
+            //bool passSingleMuonTrig = false;
+            //bool passDoubleMuonTrig = false;
+            //bool passMuonEGTrig = false;
+            //bool passDoubleEGTrig = false;
             //if (strstr(filename,"SingleElectron")) {
             //if (strstr((*triggersPassed).c_str(),"HLT_Ele35_WPTight_Gsf_v")) {
             //    passSingleElectronTrig=true;
@@ -192,6 +192,7 @@ void ReadTree(TTree* tree, TTree* & newtree, TString filename){
         vector<int> Z_lepindex1;
         vector<int> Z_lepindex2;
         vector<float> Z_pt, Z_eta, Z_phi, Z_mass;
+        lep_Hindex_stdvec->clear();
         
         for(unsigned int i=0; i<Nlep; i++){
             for(unsigned int j=i+1; j<Nlep; j++){

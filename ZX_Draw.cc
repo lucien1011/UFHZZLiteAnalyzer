@@ -18,7 +18,8 @@ TString filename;
 bool debug;
 TString mode;
 bool isData;
-float FRWeight;
+float FRWeightProd;
+float FRWeightSum;
 int nFailedLeptonsZ2;
 
 int main(int argc, char *argv[])
@@ -111,7 +112,8 @@ void MakeFRWeight(TTree* tree, TTree* newtree, bool isData, TString filename){
 
     int firstevt=0; int lastevt=tree->GetEntries();
 
-    newtree->Branch("FRWeight",&FRWeight,"FRWeight/F");
+    newtree->Branch("FRWeightProd",&FRWeightProd,"FRWeightProd/F");
+    newtree->Branch("FRWeightSum",&FRWeightSum,"FRWeightSum/F");
     newtree->Branch("nFailedLeptonsZ2",&nFailedLeptonsZ2,"nFailedLeptonsZ2/I");
     
     TFile* elFile = new TFile(elFilePath,"READ");
@@ -133,7 +135,8 @@ void MakeFRWeight(TTree* tree, TTree* newtree, bool isData, TString filename){
         if (!passedZXCRSelection) continue;
 
         nFailedLeptonsZ2 = 0;
-        FRWeight=-1.;
+        FRWeightProd=-1.;
+        FRWeightSum=-1.;
         // get properties of the non-Z1 leptons (3rd, 4th)
         int lep_tight[4];
         float lep_iso[4];
@@ -143,37 +146,50 @@ void MakeFRWeight(TTree* tree, TTree* newtree, bool isData, TString filename){
         float phiL[4];
         std::vector<int> index_vec;
         for(unsigned int k = 0; k <= 3; k++) {
-            lep_tight[k] = lep_tightId->at((*lep_Hindex_stdvec)[k]);
-            lep_iso[k]= lep_RelIsoNoFSR->at((*lep_Hindex_stdvec)[k]);
-            idL[k] = lep_id->at((*lep_Hindex_stdvec)[k]);
-//            TLorentzVector *lep = (TLorentzVector*) lep_p4->At((*lep_Hindex_stdvec)[k]);
+            lep_tight[k] = lep_tightId->at(lep_Hindex_stdvec->at(k));
+            lep_iso[k]= lep_RelIsoNoFSR->at(lep_Hindex_stdvec->at(k));
+            idL[k] = lep_id->at(lep_Hindex_stdvec->at(k));
+            //TLorentzVector *lep = (TLorentzVector*) lep_p4->At((*lep_Hindex_stdvec)[k]);
             TLorentzVector lep;
-            lep.SetPtEtaPhiM(lep_pt->at((*lep_Hindex_stdvec)[k]),lep_eta->at((*lep_Hindex_stdvec)[k]),lep_phi->at((*lep_Hindex_stdvec)[k]),lep_mass->at((*lep_Hindex_stdvec)[k]));
+            //lep.SetPtEtaPhiM(lep_pt->at((*lep_Hindex_stdvec)[k]),lep_eta->at((*lep_Hindex_stdvec)[k]),lep_phi->at((*lep_Hindex_stdvec)[k]),lep_mass->at((*lep_Hindex_stdvec)[k]));
+            lep.SetPtEtaPhiM(
+                    lep_pt->at(lep_Hindex_stdvec->at(k)),
+                    lep_eta->at(lep_Hindex_stdvec->at(k)),
+                    lep_phi->at(lep_Hindex_stdvec->at(k)),
+                    lep_mass->at(lep_Hindex_stdvec->at(k))
+                    );
             pTL[k]  = lep.Pt();
             etaL[k] = lep.Eta();
             phiL[k] = lep.Phi();
             if ( !(abs(idL[k])==11 && lep_tight[k] && lep_iso[k]<0.35) && !(abs(idL[k])==13 && lep_tight[k] && lep_iso[k]<0.35)  ) {
                 index_vec.push_back(k);
-                nFailedLeptonsZ2++;
+                //nFailedLeptonsZ2++;
             }
         };
-        // nFailedLeptonsZ2 = !(lep_tight[2] && ((abs(idL[2])==11 && lep_iso[2]<0.35) || (abs(idL[2])==13 && lep_iso[2]<0.35))) + !(lep_tight[3] && ((abs(idL[3])==11 && lep_iso[3]<0.35) || (abs(idL[3])==13 && lep_iso[3]<0.35)));
+        nFailedLeptonsZ2 = !(lep_tight[2] && ((abs(idL[2])==11 && lep_iso[2]<0.35) || (abs(idL[2])==13 && lep_iso[2]<0.35))) + !(lep_tight[3] && ((abs(idL[3])==11 && lep_iso[3]<0.35) || (abs(idL[3])==13 && lep_iso[3]<0.35)));
+
         if (nFailedLeptonsZ2 == 1) {
-            //float fr3 = getFR(idL[2], pTL[2], etaL[2], h1D_FRel_EB, h1D_FRel_EE, h1D_FRmu_EB, h1D_FRmu_EE);
-            //float fr4 = getFR(idL[3], pTL[3], etaL[3], h1D_FRel_EB, h1D_FRel_EE, h1D_FRmu_EB, h1D_FRmu_EE);
-            //float fr = (!(lep_tight[2] && ((abs(idL[2])==11 && lep_iso[2]<0.35) || (abs(idL[2])==13 && lep_iso[2]<0.35))))*(fr3/(1-fr3)) +
-            //            (!(lep_tight[3] && ((abs(idL[3])==11 && lep_iso[3]<0.35) || (abs(idL[3])==13 && lep_iso[3]<0.35))))*(fr4/(1-fr4))
+            float fr3 = getFR(idL[2], pTL[2], etaL[2], h1D_FRel_EB, h1D_FRel_EE, h1D_FRmu_EB, h1D_FRmu_EE);
+            float fr4 = getFR(idL[3], pTL[3], etaL[3], h1D_FRel_EB, h1D_FRel_EE, h1D_FRmu_EB, h1D_FRmu_EE);
+            float fr = (!(lep_tight[2] && ((abs(idL[2])==11 && lep_iso[2]<0.35) || (abs(idL[2])==13 && lep_iso[2]<0.35))))*(fr3/(1-fr3)) +
+                        (!(lep_tight[3] && ((abs(idL[3])==11 && lep_iso[3]<0.35) || (abs(idL[3])==13 && lep_iso[3]<0.35))))*(fr4/(1-fr4));
             
-            float fr3 = getFR(idL[index_vec.at(0)], pTL[index_vec.at(0)], etaL[index_vec.at(0)], h1D_FRel_EB, h1D_FRel_EE, h1D_FRmu_EB, h1D_FRmu_EE);
-            FRWeight=fr3/(1.-fr3);
+            //float fr3 = getFR(idL[index_vec.at(0)], pTL[index_vec.at(0)], etaL[index_vec.at(0)], h1D_FRel_EB, h1D_FRel_EE, h1D_FRmu_EB, h1D_FRmu_EE);
+            FRWeightProd=fr;
+            FRWeightSum=fr;
+
+            newtree->Fill();
         }
         if (nFailedLeptonsZ2 == 2){
-            //float fr3 = getFR(idL[2], pTL[2], etaL[2], h1D_FRel_EB, h1D_FRel_EE, h1D_FRmu_EB, h1D_FRmu_EE);
-            //float fr4 = getFR(idL[3], pTL[3], etaL[3], h1D_FRel_EB, h1D_FRel_EE, h1D_FRmu_EB, h1D_FRmu_EE);
-            float fr3 = getFR(idL[index_vec.at(0)], pTL[index_vec.at(0)], etaL[index_vec.at(0)], h1D_FRel_EB, h1D_FRel_EE, h1D_FRmu_EB, h1D_FRmu_EE);
-            float fr4 = getFR(idL[index_vec.at(1)], pTL[index_vec.at(1)], etaL[index_vec.at(1)], h1D_FRel_EB, h1D_FRel_EE, h1D_FRmu_EB, h1D_FRmu_EE);
+            float fr3 = getFR(idL[2], pTL[2], etaL[2], h1D_FRel_EB, h1D_FRel_EE, h1D_FRmu_EB, h1D_FRmu_EE);
+            float fr4 = getFR(idL[3], pTL[3], etaL[3], h1D_FRel_EB, h1D_FRel_EE, h1D_FRmu_EB, h1D_FRmu_EE);
+            //float fr3 = getFR(idL[index_vec.at(0)], pTL[index_vec.at(0)], etaL[index_vec.at(0)], h1D_FRel_EB, h1D_FRel_EE, h1D_FRmu_EB, h1D_FRmu_EE);
+            //float fr4 = getFR(idL[index_vec.at(1)], pTL[index_vec.at(1)], etaL[index_vec.at(1)], h1D_FRel_EB, h1D_FRel_EE, h1D_FRmu_EB, h1D_FRmu_EE);
             float fr = (fr3/(1-fr3)) * (fr4/(1-fr4)); 
-            FRWeight=fr;
+            FRWeightProd=fr;
+            FRWeightSum=fr3/(1-fr3)+fr4/(1-fr4);
+
+            newtree->Fill();
         }
 
         //float lepPt,fr;
@@ -195,7 +211,7 @@ void MakeFRWeight(TTree* tree, TTree* newtree, bool isData, TString filename){
         //    };
         //};
     
-        newtree->Fill();
+        //newtree->Fill();
 
     }; // Event loop
 

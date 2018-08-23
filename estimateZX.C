@@ -48,7 +48,7 @@ const double CUT_MZLOW = 71.;
 const double CUT_MZHIGH = 111.;
 const double CUT_MZ1LOW = 40.; 
 const double CUT_MZ1HIGH = 120.;
-const double CUT_MZ2LOW = 12;
+const double CUT_MZ2LOW = 4.;
 const double CUT_MZ2HIGH = 120.;
 const double CUT_METHIGH = 100.;
 const double CUT_M4LLOW = 105.;
@@ -62,8 +62,9 @@ const int SILENT = true;
 int printOutWidth = 12;
 int printOutPrecision = 3;
 long int lNEvents = 1;
-//TString slimmedZXFileName="/raid/raid7/lucien/Higgs/DarkZ-NTuple/20180808/SkimTree_Data80X_HIG-16-041-ZXCRSelectionWithFlag_v3/Data_Run2016_noDuplicates.root";
-TString slimmedZXFileName="/home/lucien/Higgs/DarkZ/ZPlusX/Pedja/rootfiles_MC80X_2lskim_M17_Feb21/Data_ZX_Run2017-03Feb2017_slimmedZX.root";
+//TString slimmedZXFileName="/raid/raid7/lucien/Higgs/DarkZ-NTuple/20180820/SkimTree_DarkPhoton_ZX_Run2016Data_v1/Data_Run2016_noDuplicates.root";
+TString slimmedZXFileName="/raid/raid7/lucien/Higgs/DarkZ-NTuple/20180823/SkimTree_Data80X_HIG-16-041-ZXCRSelectionWithFlag_v3_liteHZZAna/Data_Run2016_noDuplicates_1.root";
+//TString slimmedZXFileName="/raid/raid5/predragm/Run2/HZZ4l/SubmitArea_13TeV/rootfiles_MC80X_2lskim_M17_Feb21/Data_ZX_Run2017-03Feb2017_slimmedZX.root";
 
 double getFR(int lep_id, double lep_pt, double lep_eta, TH1D* h1D_FRel_EB,   TH1D* h1D_FRel_EE,   TH1D* h1D_FRmu_EB,   TH1D* h1D_FRmu_EE);
 void getEstimateZX(TString slimmedZXFileName, double ptElCut = CUT_ELPT, double ptMuCut = CUT_MUPT, double mZ2Cut = CUT_MZ2LOW);
@@ -94,10 +95,10 @@ void getEstimateZX(TString slimmedZXFileName, double ptElCut, double ptMuCut, do
     double leg_xl = 0.50, leg_xr = 0.90, leg_yb = 0.72, leg_yt = 0.90;
 
     // get the FR histograms and slimmed ZX tree
-    //TString elFilePath = "/home/lucien/UF-PyNTupleRunner/DarkZ/Data/FakeRate/fakeRates_el_v2.root";
-    //TString muFilePath = "/home/lucien/UF-PyNTupleRunner/DarkZ/Data/FakeRate/fakeRates_mu_v2.root";
-    TString elFilePath = "/home/lucien/UF-PyNTupleRunner/DarkZ/Data/FakeRate/fakeRates_el.root";
-    TString muFilePath = "/home/lucien/UF-PyNTupleRunner/DarkZ/Data/FakeRate/fakeRates_mu.root";
+    TString elFilePath = "/home/lucien/UF-PyNTupleRunner/DarkZ/Data/FakeRate/fakeRates_el_v2.root";
+    TString muFilePath = "/home/lucien/UF-PyNTupleRunner/DarkZ/Data/FakeRate/fakeRates_mu_v2.root";
+    //TString elFilePath = "/home/lucien/UF-PyNTupleRunner/DarkZ/Data/FakeRate/fakeRates_el.root";
+    //TString muFilePath = "/home/lucien/UF-PyNTupleRunner/DarkZ/Data/FakeRate/fakeRates_mu.root";
        
     TFile* elFile = new TFile(elFilePath,"READ");
     TH1D* h1D_FRel_EB = (TH1D*) elFile->Get("h1D_FRel_EB");
@@ -108,8 +109,8 @@ void getEstimateZX(TString slimmedZXFileName, double ptElCut, double ptMuCut, do
     TH1D* h1D_FRmu_EE = (TH1D*) muFile->Get("h1D_FRmu_EE");
 
     TFile *f = TFile::Open(slimmedZXFileName);
-    //TTree* zxTree = (TTree*) f->Get("passedEvents");
-    TTree* zxTree = (TTree*) f->Get("selectedEvents");
+    TTree* zxTree = (TTree*) f->Get("passedEvents");
+    //TTree* zxTree = (TTree*) f->Get("selectedEvents");
 
     // define dummy histogram for CRs
     double var_plotHigh = 600.0; double var_plotLow = 50.0; double var_nBins = 110;
@@ -153,23 +154,18 @@ int getEstimatesFromCR(TTree* tree,
     // define vars and branches
     float mass4l,massZ1,massZ2;
     float eventWeight, dataMCWeight, crossSection;
-//    long int Run, LumiSect, Event;
     ULong64_t Run, LumiSect, Event;
     int finalState, nVtx;
     bool passedFullSelection, passedZ1LSelection, passedZXCRSelection, passedZ4lSelection;
-//    TClonesArray *lep_p4 = new TClonesArray("TLorentzVector", 10);
     vector<float> *lep_pt = 0; TBranch *b_lep_pt = 0;
     vector<float> *lep_eta = 0; TBranch *b_lep_eta = 0;
     vector<float> *lep_phi = 0; TBranch *b_lep_phi = 0;
     vector<float> *lep_mass = 0; TBranch *b_lep_mass = 0;
-    int lep_Hindex[4];
+    //int lep_Hindex[4];
+    vector<int>* lep_Hindex = 0;
     vector<int> *lep_id = 0; TBranch *b_lep_id = 0;
     vector<int> *lep_tightId = 0; TBranch *b_lep_tightId = 0;
-    //vector<float> *lep_RelIso = 0; TBranch *b_lep_RelIso = 0;
     vector<float> *lep_RelIsoNoFSR = 0; TBranch *b_lep_RelIsoNoFSR = 0;
-//    vector<int> *lep_matchedR03_PdgId = 0; TBranch *b_lep_matchedR03_PdgId = 0;
-//    vector<int> *lep_matchedR03_MomId = 0; TBranch *b_lep_matchedR03_MomId = 0;
-//    vector<int> *lep_matchedR03_MomMomId = 0; TBranch *b_lep_matchedR03_MomMomId = 0;
 
     // counters
     int nEvtPassedZXCRSelection = 0;
@@ -191,26 +187,20 @@ int getEstimatesFromCR(TTree* tree,
     tree->SetBranchAddress("nVtx",&nVtx);
     tree->SetBranchAddress("finalState",&finalState);
     tree->SetBranchAddress("mass4l",&mass4l);
-    tree->SetBranchAddress("massZ1",&mass4l);
-    tree->SetBranchAddress("massZ2",&mass4l);
-    //    tree->SetBranchAddress("mass3l",&mass3l);
+    tree->SetBranchAddress("massZ1",&massZ1);
+    tree->SetBranchAddress("massZ2",&massZ2);
     tree->SetBranchAddress("lep_Hindex",&lep_Hindex);
-    //    tree->GetBranch("lep_p4")->SetAutoDelete(kFALSE);
-//    tree->SetBranchAddress("lep_p4",&lep_p4);
     tree->SetBranchAddress("lep_pt",&lep_pt,&b_lep_pt);
     tree->SetBranchAddress("lep_eta",&lep_eta,&b_lep_eta);
     tree->SetBranchAddress("lep_phi",&lep_phi,&b_lep_phi);
     tree->SetBranchAddress("lep_mass",&lep_mass,&b_lep_mass);
     tree->SetBranchAddress("lep_id",&lep_id,&b_lep_id);
     tree->SetBranchAddress("lep_tightId",&lep_tightId,&b_lep_tightId);
-    //tree->SetBranchAddress("lep_RelIso",&lep_RelIso,&b_lep_RelIso);
     tree->SetBranchAddress("lep_RelIsoNoFSR",&lep_RelIsoNoFSR,&b_lep_RelIsoNoFSR);
 
-    // fill histograms
     Long64_t nentries = tree->GetEntries();
     cout << "nentries: " << nentries << endl;
 
-    // sort tree in "Event" number, ascending
     int *index = new int[nentries];
     if (SORT_EVENTS) {
         tree->Draw("Event","","goff");
@@ -219,25 +209,22 @@ int getEstimatesFromCR(TTree* tree,
     }
     for(int iEvt=0; iEvt < nentries; iEvt++){
         if (SORT_EVENTS) {
-            tree->GetEntry(index[iEvt]);	//index[iEvt]);}// take sorted entries
+            tree->GetEntry(index[iEvt]);
         } else {
             tree->GetEntry(iEvt);
-        }// take unsroted entries
+        }
 
         // weight
         //float weight = eventWeight*dataMCWeight*crossSection*LUMI_INT/lNEvents;
         float weight = 1.;
+        
         //if (finalState!=4 && finalState!=3) continue;
         //if (finalState!=1) continue;
-        if (finalState!=2) continue;
+        //if (finalState!=2) continue;
 
         if (passedZXCRSelection) {
             nEvtPassedZXCRSelection++;
-            //        cout << "   nEvtPassedZ1LSelection: " << nEvtPassedZ1LSelection << "/" << iEvt << endl;
-            //        cout << Event << ":" << Run << ":" << LumiSect << ":" << massZ1 << ":" << passedZ1LSelection << ":" << lep_Hindex << ":" << b_lep_id << ":" << lep_p4 << endl;
-            //        cout << "iEvt: " << iEvt << ", lep_Hindex[2]: " << lep_Hindex[2] << ", lep_id->size():" << lep_id->size() << ", lep_tightId->size():" << lep_tightId->size() << endl;
-
-            // get properties of the non-Z1 leptons (3rd, 4th)
+            
             int lep_tight[4];
             float lep_iso[4];
             int idL[4];
@@ -245,36 +232,30 @@ int getEstimatesFromCR(TTree* tree,
             float etaL[4];
             float phiL[4];
             for(unsigned int k = 0; k <= 3; k++) {
-                lep_tight[k] = lep_tightId->at(lep_Hindex[k]);
-                lep_iso[k]= lep_RelIsoNoFSR->at(lep_Hindex[k]);
-                idL[k] = lep_id->at(lep_Hindex[k]);
-//                TLorentzVector *lep = (TLorentzVector*) lep_p4->At(lep_Hindex[k]);
+                //lep_tight[k] = lep_tightId->at(lep_Hindex[k]);
+                //lep_iso[k]= lep_RelIsoNoFSR->at(lep_Hindex[k]);
+                //idL[k] = lep_id->at(lep_Hindex[k]);
+
+                lep_tight[k] = lep_tightId->at(lep_Hindex->at(k));
+                lep_iso[k]= lep_RelIsoNoFSR->at(lep_Hindex->at(k));
+                idL[k] = lep_id->at(lep_Hindex->at(k));
                 TLorentzVector lep;
-                lep.SetPtEtaPhiM(lep_pt->at(lep_Hindex[k]),lep_eta->at(lep_Hindex[k]),lep_phi->at(lep_Hindex[k]),lep_mass->at(lep_Hindex[k]));
+                lep.SetPtEtaPhiM(lep_pt->at(lep_Hindex->at(k)),lep_eta->at(lep_Hindex->at(k)),lep_phi->at(lep_Hindex->at(k)),lep_mass->at(lep_Hindex->at(k)));
+                //lep.SetPtEtaPhiM(lep_pt->at(lep_Hindex[k]),lep_eta->at(lep_Hindex[k]),lep_phi->at(lep_Hindex[k]),lep_mass->at(lep_Hindex[k]));
                 pTL[k]  = lep.Pt();
                 etaL[k] = lep.Eta();
                 phiL[k] = lep.Phi();
             }
 
             // count the failed leptons
-//            nFailedLeptonsZ1 = !(lep_tight[0] && ((abs(idL[0])==11 && lep_iso[0]<0.35) || (abs(idL[0])==13 && lep_iso[0]<0.35))) +
-//                                   !(lep_tight[1] && ((abs(idL[1])==11 && lep_iso[1]<0.35) || (abs(idL[1])==13 && lep_iso[1]<0.35)));
-            nFailedLeptonsZ2 = !(lep_tight[2] && ((abs(idL[2])==11 && lep_iso[2]<0.35) || (abs(idL[2])==13 && lep_iso[2]<0.35))) +
-                                   !(lep_tight[3] && ((abs(idL[3])==11 && lep_iso[3]<0.35) || (abs(idL[3])==13 && lep_iso[3]<0.35)));
-//            nFailedLeptons   = nFailedLeptonsZ1 + nFailedLeptonsZ2;
-//            nFailedIDOnlyLeptonsZ2 = !(lep_tight[2]) + !(lep_tight[3]);
-
-//            float Riso = 0.3;
-//            float dR34 = pow( (etaL[2] - etaL[3])*(etaL[2] - etaL[3]) + (phiL[2] - phiL[3])*(phiL[2] - phiL[3]), 0.5);
+            nFailedLeptonsZ2 = !(lep_tight[2] && ((abs(idL[2])==11 && lep_iso[2]<0.35) || (abs(idL[2])==13 && lep_iso[2]<0.35))) + !(lep_tight[3] && ((abs(idL[3])==11 && lep_iso[3]<0.35) || (abs(idL[3])==13 && lep_iso[3]<0.35))); 
             
-            // prepare the estimates
             if (nFailedLeptonsZ2 == 1) {
                 nEvt3P1FLeptons++;
                 float fr3 = getFR(idL[2], pTL[2], etaL[2], h1D_FRel_EB, h1D_FRel_EE, h1D_FRmu_EB, h1D_FRmu_EE);
                 float fr4 = getFR(idL[3], pTL[3], etaL[3], h1D_FRel_EB, h1D_FRel_EE, h1D_FRmu_EB, h1D_FRmu_EE);
                 float fr = (!(lep_tight[2] && ((abs(idL[2])==11 && lep_iso[2]<0.35) || (abs(idL[2])==13 && lep_iso[2]<0.35))))*(fr3/(1-fr3)) +
                             (!(lep_tight[3] && ((abs(idL[3])==11 && lep_iso[3]<0.35) || (abs(idL[3])==13 && lep_iso[3]<0.35))))*(fr4/(1-fr4));
-//                if (dR34<2*Riso) fr = 0;
                 h1D_m4l_SR_3P1F->Fill(mass4l, weight * fr);
             }
             if (nFailedLeptonsZ2 == 2){
@@ -282,13 +263,7 @@ int getEstimatesFromCR(TTree* tree,
                 float fr3 = getFR(idL[2], pTL[2], etaL[2], h1D_FRel_EB, h1D_FRel_EE, h1D_FRmu_EB, h1D_FRmu_EE);
                 float fr4 = getFR(idL[3], pTL[3], etaL[3], h1D_FRel_EB, h1D_FRel_EE, h1D_FRmu_EB, h1D_FRmu_EE);
                 float fr = (fr3/(1-fr3)) * (fr4/(1-fr4));
-//                if (dR34<2*Riso) {
-//                    nEvt2P2FLeptonsIsoID_lt06 += 2;
-//                    nEvt2P2FLeptonsIDonly_lt06 += nFailedIDOnlyLeptonsZ2;
-//                    float frN = fr3    *fr4    *(dR34/(2*Riso))*(dR34/(2*Riso)) + (pow(fr3    *fr4    ,0.5))*(1 - (dR34/(2*Riso)));
-//                    float frD = (1-fr3)*(1-fr4)*(dR34/(2*Riso))*(dR34/(2*Riso)) + (pow((1-fr3)*(1-fr4),0.5))*(1 - (dR34/(2*Riso)));
-//                    fr = frN/frD;
-//                }
+
                 h1D_m4l_SR_2P2F->Fill(mass4l, weight * fr);
             }
         }
@@ -300,6 +275,7 @@ int getEstimatesFromCR(TTree* tree,
 
     cout  << setw(printOutWidth) << "int. contributions from 2P2F region: " << h1D_m4l_SR_2P2F->Integral(0,h1D_m4l_SR_2P2F->GetNbinsX()+1) << endl;
     cout  << setw(printOutWidth) << "int. contributions from 3P1F region: " << h1D_m4l_SR_3P1F->Integral(0,h1D_m4l_SR_3P1F->GetNbinsX()+1) << endl;
+    cout  << setw(printOutWidth) << "Prediction from ZX CR: " << h1D_m4l_SR_3P1F->Integral(0,h1D_m4l_SR_3P1F->GetNbinsX()+1) - h1D_m4l_SR_2P2F->Integral(0,h1D_m4l_SR_2P2F->GetNbinsX()+1) << endl;
 
     return 0;
 }
