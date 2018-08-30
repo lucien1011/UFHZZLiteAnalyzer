@@ -57,6 +57,7 @@ const double CUT_M4LLOW_FULL = 0.;
 const double CUT_M4LHIGH_FULL = 1000.;
 const TString sPlotsStore = "plotsZX/";
 const int SORT_EVENTS = false;
+const double m4lDivide = 150.;
 // print out and debugging settings
 const int SILENT = true;
 int printOutWidth = 12;
@@ -71,6 +72,9 @@ void getEstimateZX(TString slimmedZXFileName, double ptElCut = CUT_ELPT, double 
 int getEstimatesFromCR(TTree* tree,
                   TH1D* h1D_FRel_EB,   TH1D* h1D_FRel_EE,   TH1D* h1D_FRmu_EB,   TH1D* h1D_FRmu_EE,
                   TH1D* &h1D_m4l_SR_2P2F, TH1D* &h1D_m4l_SR_3P1F,
+                  TH1D* &h1D_m4l_SR_2P2F_4mu, TH1D* &h1D_m4l_SR_3P1F_4mu,
+                  TH1D* &h1D_m4l_SR_2P2F_4e, TH1D* &h1D_m4l_SR_3P1F_4e,
+                  TH1D* &h1D_m4l_SR_2P2F_2e2mu, TH1D* &h1D_m4l_SR_3P1F_2e2mu,
                   double ptElCut = CUT_ELPT, double ptMuCut = CUT_MUPT, double mZ2Cut = CUT_MZ2LOW);
 
 int estimateZX(){
@@ -95,10 +99,10 @@ void getEstimateZX(TString slimmedZXFileName, double ptElCut, double ptMuCut, do
     double leg_xl = 0.50, leg_xr = 0.90, leg_yb = 0.72, leg_yt = 0.90;
 
     // get the FR histograms and slimmed ZX tree
-    TString elFilePath = "/home/lucien/UF-PyNTupleRunner/DarkZ/Data/FakeRate/fakeRates_el_v2.root";
-    TString muFilePath = "/home/lucien/UF-PyNTupleRunner/DarkZ/Data/FakeRate/fakeRates_mu_v2.root";
-    //TString elFilePath = "/home/lucien/UF-PyNTupleRunner/DarkZ/Data/FakeRate/fakeRates_el.root";
-    //TString muFilePath = "/home/lucien/UF-PyNTupleRunner/DarkZ/Data/FakeRate/fakeRates_mu.root";
+    //TString elFilePath = "/home/lucien/UF-PyNTupleRunner/DarkZ/Data/FakeRate/fakeRates_el_v2.root";
+    //TString muFilePath = "/home/lucien/UF-PyNTupleRunner/DarkZ/Data/FakeRate/fakeRates_mu_v2.root";
+    TString elFilePath = "/home/lucien/UF-PyNTupleRunner/DarkZ/Data/FakeRate/fakeRates_el.root";
+    TString muFilePath = "/home/lucien/UF-PyNTupleRunner/DarkZ/Data/FakeRate/fakeRates_mu.root";
        
     TFile* elFile = new TFile(elFilePath,"READ");
     TH1D* h1D_FRel_EB = (TH1D*) elFile->Get("h1D_FRel_EB");
@@ -119,11 +123,30 @@ void getEstimateZX(TString slimmedZXFileName, double ptElCut, double ptMuCut, do
     double binWidth = ((int) (100*(var_plotHigh - var_plotLow)/var_nBins))/100.;
 
     // define CR histograms
-    TH1D* h1D_m4l_SR_2P2F = new TH1D("h1D_m4l_SR_2P2F","h1D_m4l_SR_2P2F",var_nBins, var_plotLow, var_plotHigh); h1D_m4l_SR_2P2F->Sumw2();
-    TH1D* h1D_m4l_SR_3P1F = new TH1D("h1D_m4l_SR_3P1F","h1D_m4l_SR_3P1F",var_nBins, var_plotLow, var_plotHigh); h1D_m4l_SR_3P1F->Sumw2();
+    TH1D* h1D_m4l_SR_2P2F       = new TH1D("h1D_m4l_SR_2P2F","h1D_m4l_SR_2P2F",var_nBins, var_plotLow, var_plotHigh); 
+    h1D_m4l_SR_2P2F->Sumw2();
+    TH1D* h1D_m4l_SR_2P2F_4mu   = new TH1D("h1D_m4l_SR_2P2F_4mu","h1D_m4l_SR_2P2F_4mu",var_nBins, var_plotLow, var_plotHigh); 
+    h1D_m4l_SR_2P2F_4mu->Sumw2();
+    TH1D* h1D_m4l_SR_2P2F_4e    = new TH1D("h1D_m4l_SR_2P2F_4e","h1D_m4l_SR_2P2F_4e",var_nBins, var_plotLow, var_plotHigh); 
+    h1D_m4l_SR_2P2F_4e->Sumw2();
+    TH1D* h1D_m4l_SR_2P2F_2e2mu = new TH1D("h1D_m4l_SR_2P2F_2e2mu","h1D_m4l_SR_2P2F_2e2mu",var_nBins, var_plotLow, var_plotHigh); 
+    h1D_m4l_SR_2P2F_2e2mu->Sumw2();
+    TH1D* h1D_m4l_SR_3P1F       = new TH1D("h1D_m4l_SR_3P1F","h1D_m4l_SR_3P1F",var_nBins, var_plotLow, var_plotHigh); 
+    h1D_m4l_SR_3P1F->Sumw2();
+    TH1D* h1D_m4l_SR_3P1F_4mu   = new TH1D("h1D_m4l_SR_3P1F_4mu","h1D_m4l_SR_3P1F_4mu",var_nBins, var_plotLow, var_plotHigh); 
+    h1D_m4l_SR_3P1F_4mu->Sumw2();
+    TH1D* h1D_m4l_SR_3P1F_4e    = new TH1D("h1D_m4l_SR_3P1F_4e","h1D_m4l_SR_3P1F_4e",var_nBins, var_plotLow, var_plotHigh); 
+    h1D_m4l_SR_3P1F_4e->Sumw2();
+    TH1D* h1D_m4l_SR_3P1F_2e2mu = new TH1D("h1D_m4l_SR_3P1F_2e2mu","h1D_m4l_SR_3P1F_2e2mu",var_nBins, var_plotLow, var_plotHigh); 
+    h1D_m4l_SR_3P1F_2e2mu->Sumw2();
 
     // get histograms from tree AnaZX/passedEvents
-    getEstimatesFromCR(zxTree, h1D_FRel_EB, h1D_FRel_EE, h1D_FRmu_EB, h1D_FRmu_EE, h1D_m4l_SR_2P2F, h1D_m4l_SR_3P1F, ptElCut, ptMuCut, mZ2Cut);
+    getEstimatesFromCR(zxTree, h1D_FRel_EB, h1D_FRel_EE, h1D_FRmu_EB, h1D_FRmu_EE, 
+            h1D_m4l_SR_2P2F, h1D_m4l_SR_3P1F, 
+            h1D_m4l_SR_2P2F_4mu, h1D_m4l_SR_3P1F_4mu, 
+            h1D_m4l_SR_2P2F_4e, h1D_m4l_SR_3P1F_4e, 
+            h1D_m4l_SR_2P2F_2e2mu, h1D_m4l_SR_3P1F_2e2mu, 
+            ptElCut, ptMuCut, mZ2Cut);
 
     // total contribution (3P1F - 2P2F)
     TH1D* h1D_m4l_SR_tot = (TH1D*) h1D_m4l_SR_3P1F->Clone("h1D_m4l_SR_tot");
@@ -149,6 +172,9 @@ void getEstimateZX(TString slimmedZXFileName, double ptElCut, double ptMuCut, do
 int getEstimatesFromCR(TTree* tree,
               TH1D* h1D_FRel_EB,   TH1D* h1D_FRel_EE,   TH1D* h1D_FRmu_EB,   TH1D* h1D_FRmu_EE,
               TH1D* &h1D_m4l_SR_2P2F, TH1D* &h1D_m4l_SR_3P1F,
+              TH1D* &h1D_m4l_SR_2P2F_4mu, TH1D* &h1D_m4l_SR_3P1F_4mu,
+              TH1D* &h1D_m4l_SR_2P2F_4e, TH1D* &h1D_m4l_SR_3P1F_4e,
+              TH1D* &h1D_m4l_SR_2P2F_2e2mu, TH1D* &h1D_m4l_SR_3P1F_2e2mu,
               double ptElCut, double ptMuCut, double mZ2Cut){
 
     // define vars and branches
@@ -217,10 +243,6 @@ int getEstimatesFromCR(TTree* tree,
         // weight
         //float weight = eventWeight*dataMCWeight*crossSection*LUMI_INT/lNEvents;
         float weight = 1.;
-        
-        //if (finalState!=4 && finalState!=3) continue;
-        //if (finalState!=1) continue;
-        //if (finalState!=2) continue;
 
         if (passedZXCRSelection) {
             nEvtPassedZXCRSelection++;
@@ -257,14 +279,31 @@ int getEstimatesFromCR(TTree* tree,
                 float fr = (!(lep_tight[2] && ((abs(idL[2])==11 && lep_iso[2]<0.35) || (abs(idL[2])==13 && lep_iso[2]<0.35))))*(fr3/(1-fr3)) +
                             (!(lep_tight[3] && ((abs(idL[3])==11 && lep_iso[3]<0.35) || (abs(idL[3])==13 && lep_iso[3]<0.35))))*(fr4/(1-fr4));
                 h1D_m4l_SR_3P1F->Fill(mass4l, weight * fr);
+                if (finalState==4 || finalState==3) {
+                    h1D_m4l_SR_3P1F_2e2mu->Fill(mass4l, weight * fr);
+                };
+                if (finalState==1) {
+                    h1D_m4l_SR_3P1F_4mu->Fill(mass4l, weight * fr);
+                };
+                if (finalState==2) {
+                    h1D_m4l_SR_3P1F_4e->Fill(mass4l, weight * fr);
+                };
             }
             if (nFailedLeptonsZ2 == 2){
                 nEvt2P2FLeptons++;
                 float fr3 = getFR(idL[2], pTL[2], etaL[2], h1D_FRel_EB, h1D_FRel_EE, h1D_FRmu_EB, h1D_FRmu_EE);
                 float fr4 = getFR(idL[3], pTL[3], etaL[3], h1D_FRel_EB, h1D_FRel_EE, h1D_FRmu_EB, h1D_FRmu_EE);
                 float fr = (fr3/(1-fr3)) * (fr4/(1-fr4));
-
                 h1D_m4l_SR_2P2F->Fill(mass4l, weight * fr);
+                if (finalState==4 || finalState==3) {
+                    h1D_m4l_SR_2P2F_2e2mu->Fill(mass4l, weight * fr);
+                };
+                if (finalState==1) {
+                    h1D_m4l_SR_2P2F_4mu->Fill(mass4l, weight * fr);
+                };
+                if (finalState==2) {
+                    h1D_m4l_SR_2P2F_4e->Fill(mass4l, weight * fr);
+                };
             }
         }
     }
@@ -275,7 +314,16 @@ int getEstimatesFromCR(TTree* tree,
 
     cout  << setw(printOutWidth) << "int. contributions from 2P2F region: " << h1D_m4l_SR_2P2F->Integral(0,h1D_m4l_SR_2P2F->GetNbinsX()+1) << endl;
     cout  << setw(printOutWidth) << "int. contributions from 3P1F region: " << h1D_m4l_SR_3P1F->Integral(0,h1D_m4l_SR_3P1F->GetNbinsX()+1) << endl;
-    cout  << setw(printOutWidth) << "Prediction from ZX CR: " << h1D_m4l_SR_3P1F->Integral(0,h1D_m4l_SR_3P1F->GetNbinsX()+1) - h1D_m4l_SR_2P2F->Integral(0,h1D_m4l_SR_2P2F->GetNbinsX()+1) << endl;
+    cout  << setw(printOutWidth) << "Prediction from ZX CR (total): " << h1D_m4l_SR_3P1F->Integral(0,h1D_m4l_SR_3P1F->GetNbinsX()+1) - h1D_m4l_SR_2P2F->Integral(0,h1D_m4l_SR_2P2F->GetNbinsX()+1) << endl;
+    cout  << setw(printOutWidth) << "Prediction from ZX CR (4mu):   " << h1D_m4l_SR_3P1F_4mu->Integral(0,h1D_m4l_SR_3P1F_4mu->GetNbinsX()+1) - h1D_m4l_SR_2P2F_4mu->Integral(0,h1D_m4l_SR_2P2F_4mu->GetNbinsX()+1) << endl;
+    cout  << setw(printOutWidth) << "Prediction from ZX CR (4e):    " << h1D_m4l_SR_3P1F_4e->Integral(0,h1D_m4l_SR_3P1F_4e->GetNbinsX()+1) - h1D_m4l_SR_2P2F_4e->Integral(0,h1D_m4l_SR_2P2F_4e->GetNbinsX()+1) << endl;
+    cout  << setw(printOutWidth) << "Prediction from ZX CR (2e2mu): " << h1D_m4l_SR_3P1F_2e2mu->Integral(0,h1D_m4l_SR_3P1F_2e2mu->GetNbinsX()+1) - h1D_m4l_SR_2P2F_2e2mu->Integral(0,h1D_m4l_SR_2P2F_2e2mu->GetNbinsX()+1) << endl;
+    int divideBin = h1D_m4l_SR_3P1F->GetXaxis()->FindBin(m4lDivide);
+    int totBin = h1D_m4l_SR_3P1F->GetNbinsX();
+    cout  << setw(printOutWidth) << "Prediction from ZX CR with m4l separation (total): " << h1D_m4l_SR_3P1F->Integral(0,divideBin) - h1D_m4l_SR_2P2F->Integral(0,divideBin) + h1D_m4l_SR_2P2F->Integral(divideBin,totBin+1) << endl;
+    cout  << setw(printOutWidth) << "Prediction from ZX CR with m4l separation (4mu)  : " << h1D_m4l_SR_3P1F_4mu->Integral(0,divideBin) - h1D_m4l_SR_2P2F_4mu->Integral(0,divideBin) + h1D_m4l_SR_2P2F_4mu->Integral(divideBin,totBin+1) << endl;
+    cout  << setw(printOutWidth) << "Prediction from ZX CR with m4l separation (4e)   : " << h1D_m4l_SR_3P1F_4e->Integral(0,divideBin) - h1D_m4l_SR_2P2F_4e->Integral(0,divideBin) + h1D_m4l_SR_2P2F_4e->Integral(divideBin,totBin+1) << endl;
+    cout  << setw(printOutWidth) << "Prediction from ZX CR with m4l separation (2e2mu): " << h1D_m4l_SR_3P1F_2e2mu->Integral(0,divideBin) - h1D_m4l_SR_2P2F_2e2mu->Integral(0,divideBin) + h1D_m4l_SR_2P2F_2e2mu->Integral(divideBin,totBin+1) << endl;
 
     return 0;
 }
