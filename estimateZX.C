@@ -84,10 +84,10 @@ int estimateZX(){
 
 //_______________________________________________________________________________________________________________________________________________
 double getFR(int lep_id, float lep_pt, float lep_eta, TH1D* h1D_FRel_EB,   TH1D* h1D_FRel_EE,   TH1D* h1D_FRmu_EB,   TH1D* h1D_FRmu_EE){
-    if ((abs(lep_id) == 11) && (fabs(lep_eta) < 1.47)) return h1D_FRel_EB->GetBinContent(h1D_FRel_EB->FindBin(lep_pt));
-    if ((abs(lep_id) == 11) && (fabs(lep_eta) > 1.47)) return h1D_FRel_EE->GetBinContent(h1D_FRel_EE->FindBin(lep_pt));
-    if ((abs(lep_id) == 13) && (fabs(lep_eta) < 1.47)) return h1D_FRmu_EB->GetBinContent(h1D_FRmu_EB->FindBin(lep_pt));
-    if ((abs(lep_id) == 13) && (fabs(lep_eta) > 1.47)) return h1D_FRmu_EE->GetBinContent(h1D_FRmu_EE->FindBin(lep_pt));
+    if ((abs(lep_id) == 11) && (fabs(lep_eta) < 1.497)) return h1D_FRel_EB->GetBinContent(h1D_FRel_EB->FindBin(lep_pt));
+    if ((abs(lep_id) == 11) && (fabs(lep_eta) > 1.497)) return h1D_FRel_EE->GetBinContent(h1D_FRel_EE->FindBin(lep_pt));
+    if ((abs(lep_id) == 13) && (fabs(lep_eta) < 1.2)) return h1D_FRmu_EB->GetBinContent(h1D_FRmu_EB->FindBin(lep_pt));
+    if ((abs(lep_id) == 13) && (fabs(lep_eta) > 1.2)) return h1D_FRmu_EE->GetBinContent(h1D_FRmu_EE->FindBin(lep_pt));
     return 0;
 }
 
@@ -101,9 +101,11 @@ void getEstimateZX(TString slimmedZXFileName, double ptElCut, double ptMuCut, do
     // get the FR histograms and slimmed ZX tree
     //TString elFilePath = "/home/lucien/UF-PyNTupleRunner/DarkZ/Data/FakeRate/fakeRates_el_v2.root";
     //TString muFilePath = "/home/lucien/UF-PyNTupleRunner/DarkZ/Data/FakeRate/fakeRates_mu_v2.root";
-    TString elFilePath = "/home/lucien/UF-PyNTupleRunner/DarkZ/Data/FakeRate/fakeRates_el.root";
-    TString muFilePath = "/home/lucien/UF-PyNTupleRunner/DarkZ/Data/FakeRate/fakeRates_mu.root";
-       
+    //TString elFilePath = "/home/lucien/UF-PyNTupleRunner/DarkZ/Data/FakeRate/fakeRates_el.root";
+    //TString muFilePath = "/home/lucien/UF-PyNTupleRunner/DarkZ/Data/FakeRate/fakeRates_mu.root";
+    TString elFilePath = "/home/lucien/Higgs/DarkZ/CMSSW_9_4_2/src/liteUFHZZ4LAnalyzer/fakeRate.root";   
+    TString muFilePath = "/home/lucien/Higgs/DarkZ/CMSSW_9_4_2/src/liteUFHZZ4LAnalyzer/fakeRate.root";   
+
     TFile* elFile = new TFile(elFilePath,"READ");
     TH1D* h1D_FRel_EB = (TH1D*) elFile->Get("h1D_FRel_EB");
     TH1D* h1D_FRel_EE = (TH1D*) elFile->Get("h1D_FRel_EE");
