@@ -1,4 +1,4 @@
-#include "DarkZConfig.h" 
+#include "UpsilonConfig.h" 
 #include "deltaPhi.h"
 #include "ZZ4LAnalysisTree.h"
 #include "LeptonEfficiency.h"
@@ -187,7 +187,8 @@ void ReadTree(TTree* tree, TTree* & newtree, TString filename){
         
         if(!properLep_ID) continue;
         // First, make all Z candidates including any FSR photons
-        const double Zmass = 91.1876;
+        //const double Zmass = 91.1876;
+        const double Zmass = 9.46030;
         int n_Zs=0;
         vector<int> Z_lepindex1;
         vector<int> Z_lepindex2;
@@ -681,7 +682,9 @@ void ReadTree(TTree* tree, TTree* & newtree, TString filename){
                 
             if(debug) cout<<"fill tree"<<endl;
             if(debug) cout<<endl;
-            newtree->Fill();   
+            if (massZ1 < mZ1High && massZ2 > mZ1Low) {
+                newtree->Fill();
+            };
         }   
     } 
 }
@@ -713,6 +716,10 @@ void SetNewTree(TTree* newtree){
     newtree->Branch("lep_eta",&lep_eta);
     newtree->Branch("lep_phi",&lep_phi);
     newtree->Branch("lep_mass",&lep_mass);
+    newtree->Branch("lepFSR_pt",&lep_pt);
+    newtree->Branch("lepFSR_eta",&lep_eta);
+    newtree->Branch("lepFSR_phi",&lep_phi);
+    newtree->Branch("lepFSR_mass",&lep_mass);
     newtree->Branch("lep_tightId",&lep_tightId);
     newtree->Branch("lep_RelIso",&lep_RelIso);
     newtree->Branch("lep_RelIsoNoFSR",&lep_RelIsoNoFSR);
