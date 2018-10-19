@@ -1,26 +1,30 @@
-#include "deltaPhi.h"
-#include "ZZ4LAnalysisTree.h"
-#include "LeptonEfficiency.h"
-#include "PileupWeight.h"
+#include "deltaR.h"
+#include "ZXTree.h"
+//#include "LeptonEfficiency.h"
+//#include "PileupWeight.h"
 #include "Helper.h"
-#include "ZXDrawConfig.h"
+#include "ZXWeightConfig.h"
+#include <math.h>
 
-using namespace std;
+using namespace std;  
 
 TTree* GetTree(TFile* infile);
-void DrawZ1LPlot(TTree* tree, bool isData);
-void MakeFRWeight(TTree* tree, TTree* newtree, bool isData, TString filename);
+void MakeFRWeight(TTree* tree, TTree* newtree, bool isData, TString filename, TString inputType);
 //float getFR(float lepPt, TH1D* hist);
 double getFR(int lep_id, double lep_pt, double lep_eta, TH1D* h1D_FRel_EB,   TH1D* h1D_FRel_EE,   TH1D* h1D_FRmu_EB,   TH1D* h1D_FRmu_EE);
 void SetNewTree(TTree* tree);
+void SetPedjaTree(TTree* tree);
 
 TString filename;
 bool debug;
 TString mode;
 bool isData;
 float FRWeightProd;
+float FRWeightProdCorr;
 float FRWeightSum;
-int nFailedLeptonsZ2;
+float FRWeightSumCorrL3;
+float FRWeightSumCorrL4;
+float FRWeightSumCorrIso;
 
 int main(int argc, char *argv[])
 {    
@@ -31,32 +35,12 @@ int main(int argc, char *argv[])
 
   mode = argv[1];
 
-  if (mode=="DrawZ1LPlot") {
+  if (mode=="MakeFRWeight") { 
     filename = argv[2];
     TString sumWeightFilename = argv[3];
     TString outfilename = argv[4];
     isData = atof(argv[5]) > 0;
-
-    if (!isData) {
-        TFile* sumWeightfile = TFile::Open(sumWeightFilename+".root");
-        TH1D* sumWeightHist = (TH1D*) sumWeightfile->Get(sumWeightPath);
-        sumweight = sumWeightHist->Integral();
-    };
-
-    TFile* infile = TFile::Open(filename+".root");
-    TTree* tree = GetTree(infile);
-    if (!tree) return -1;
-
-    TFile* tmpFile =  new TFile(outfilename+".root","RECREATE");
-    tmpFile->cd();
-    DrawZ1LPlot(tree,isData);
-    tmpFile->Write();
-    tmpFile->Close();
-  } else if (mode=="MakeFRWeight") { 
-    filename = argv[2];
-    TString sumWeightFilename = argv[3];
-    TString outfilename = argv[4];
-    isData = atof(argv[5]) > 0;
+    TString inputType = argv[6];
 
     if (!isData) {
         TFile* sumWeightfile = TFile::Open(sumWeightFilename+".root");
@@ -73,10 +57,15 @@ int main(int argc, char *argv[])
     TTree* newtree = tree->CloneTree(0);
     newtree->CopyAddresses(tree);
 
-    MakeFRWeight(tree,newtree,isData,filename);
+    MakeFRWeight(tree,newtree,isData,filename,inputType);
 
     tmpFile->cd();
-    newtree->Write("passedEvents",TObject::kOverwrite);
+    if (inputType=="liteHZZ") {
+        newtree->Write("passedEvents",TObject::kOverwrite);
+    } else if (inputType=="PedjaSkim") {
+        newtree->Write("selectedEvents",TObject::kOverwrite);
+    };
+
     tmpFile->Close();
   };
 
@@ -105,15 +94,23 @@ double getFR(int lep_id, float lep_pt, float lep_eta, TH1D* h1D_FRel_EB,   TH1D*
     return 0;
 }
 
-void MakeFRWeight(TTree* tree, TTree* newtree, bool isData, TString filename){
+void MakeFRWeight(TTree* tree, TTree* newtree, bool isData, TString filename, TString inputType="liteHZZ"){
     
     // ZZ4LAnalysisTree::setAddresses(tree, filename);
-    SetNewTree(tree);
+    if (inputType=="liteHZZ") {
+        SetNewTree(tree);
+    } else if (inputType=="PedjaSkim") {
+        SetPedjaTree(tree);
+    };
 
     int firstevt=0; int lastevt=tree->GetEntries();
 
     newtree->Branch("FRWeightProd",&FRWeightProd,"FRWeightProd/F");
+    newtree->Branch("FRWeightProdCorr",&FRWeightProdCorr,"FRWeightProdCorr/F");
     newtree->Branch("FRWeightSum",&FRWeightSum,"FRWeightSum/F");
+    newtree->Branch("FRWeightSumCorrL3",&FRWeightSumCorrL3,"FRWeightSumCorrL3/F");
+    newtree->Branch("FRWeightSumCorrL4",&FRWeightSumCorrL4,"FRWeightSumCorrL4/F");
+    newtree->Branch("FRWeightSumCorrIso",&FRWeightSumCorrIso,"FRWeightSumCorrIso/F");
     newtree->Branch("nFailedLeptonsZ2",&nFailedLeptonsZ2,"nFailedLeptonsZ2/I");
     
     TFile* elFile = new TFile(elFilePath,"READ");
@@ -134,7 +131,7 @@ void MakeFRWeight(TTree* tree, TTree* newtree, bool isData, TString filename){
 
         if (!passedZXCRSelection) continue;
 
-        nFailedLeptonsZ2 = 0;
+        //nFailedLeptonsZ2 = 0;
         FRWeightProd=-1.;
         FRWeightSum=-1.;
         // get properties of the non-Z1 leptons (3rd, 4th)
@@ -146,18 +143,33 @@ void MakeFRWeight(TTree* tree, TTree* newtree, bool isData, TString filename){
         float phiL[4];
         std::vector<int> index_vec;
         for(unsigned int k = 0; k <= 3; k++) {
-            lep_tight[k] = lep_tightId->at(lep_Hindex_stdvec->at(k));
-            lep_iso[k]= lep_RelIsoNoFSR->at(lep_Hindex_stdvec->at(k));
-            idL[k] = lep_id->at(lep_Hindex_stdvec->at(k));
-            //TLorentzVector *lep = (TLorentzVector*) lep_p4->At((*lep_Hindex_stdvec)[k]);
             TLorentzVector lep;
-            //lep.SetPtEtaPhiM(lep_pt->at((*lep_Hindex_stdvec)[k]),lep_eta->at((*lep_Hindex_stdvec)[k]),lep_phi->at((*lep_Hindex_stdvec)[k]),lep_mass->at((*lep_Hindex_stdvec)[k]));
-            lep.SetPtEtaPhiM(
-                    lep_pt->at(lep_Hindex_stdvec->at(k)),
-                    lep_eta->at(lep_Hindex_stdvec->at(k)),
-                    lep_phi->at(lep_Hindex_stdvec->at(k)),
-                    lep_mass->at(lep_Hindex_stdvec->at(k))
-                    );
+            if (inputType=="liteHZZ") {
+                lep_tight[k] = lep_tightId->at(lep_Hindex_stdvec->at(k));
+                lep_iso[k]= lep_RelIsoNoFSR->at(lep_Hindex_stdvec->at(k));
+                idL[k] = lep_id->at(lep_Hindex_stdvec->at(k));
+                //TLorentzVector *lep = (TLorentzVector*) lep_p4->At((*lep_Hindex_stdvec)[k]);
+                //lep.SetPtEtaPhiM(lep_pt->at((*lep_Hindex_stdvec)[k]),lep_eta->at((*lep_Hindex_stdvec)[k]),lep_phi->at((*lep_Hindex_stdvec)[k]),lep_mass->at((*lep_Hindex_stdvec)[k]));
+                lep.SetPtEtaPhiM(
+                        lep_pt->at(lep_Hindex_stdvec->at(k)),
+                        lep_eta->at(lep_Hindex_stdvec->at(k)),
+                        lep_phi->at(lep_Hindex_stdvec->at(k)),
+                        lep_mass->at(lep_Hindex_stdvec->at(k))
+                        );
+            } else if (inputType=="PedjaSkim") {
+                lep_tight[k] = lep_tightId->at(lep_Hindex[k]);
+                lep_iso[k]= lep_RelIsoNoFSR->at(lep_Hindex[k]);
+                idL[k] = lep_id->at(lep_Hindex[k]);
+                //TLorentzVector *lep = (TLorentzVector*) lep_p4->At((*lep_Hindex_stdvec)[k]);
+                //lep.SetPtEtaPhiM(lep_pt->at((*lep_Hindex_stdvec)[k]),lep_eta->at((*lep_Hindex_stdvec)[k]),lep_phi->at((*lep_Hindex_stdvec)[k]),lep_mass->at((*lep_Hindex_stdvec)[k]));
+                lep.SetPtEtaPhiM(
+                        lep_pt->at(lep_Hindex[k]),
+                        lep_eta->at(lep_Hindex[k]),
+                        lep_phi->at(lep_Hindex[k]),
+                        lep_mass->at(lep_Hindex[k])
+                        );
+            };
+
             pTL[k]  = lep.Pt();
             etaL[k] = lep.Eta();
             phiL[k] = lep.Phi();
@@ -166,7 +178,10 @@ void MakeFRWeight(TTree* tree, TTree* newtree, bool isData, TString filename){
                 //nFailedLeptonsZ2++;
             }
         };
-        nFailedLeptonsZ2 = !(lep_tight[2] && ((abs(idL[2])==11 && lep_iso[2]<0.35) || (abs(idL[2])==13 && lep_iso[2]<0.35))) + !(lep_tight[3] && ((abs(idL[3])==11 && lep_iso[3]<0.35) || (abs(idL[3])==13 && lep_iso[3]<0.35)));
+
+        if (inputType=="liteHZZ") {
+            nFailedLeptonsZ2 = !(lep_tight[2] && ((abs(idL[2])==11 && lep_iso[2]<0.35) || (abs(idL[2])==13 && lep_iso[2]<0.35))) + !(lep_tight[3] && ((abs(idL[3])==11 && lep_iso[3]<0.35) || (abs(idL[3])==13 && lep_iso[3]<0.35)));
+        };
 
         if (nFailedLeptonsZ2 == 1) {
             float fr3 = getFR(idL[2], pTL[2], etaL[2], h1D_FRel_EB, h1D_FRel_EE, h1D_FRmu_EB, h1D_FRmu_EE);
@@ -177,6 +192,15 @@ void MakeFRWeight(TTree* tree, TTree* newtree, bool isData, TString filename){
             //float fr3 = getFR(idL[index_vec.at(0)], pTL[index_vec.at(0)], etaL[index_vec.at(0)], h1D_FRel_EB, h1D_FRel_EE, h1D_FRmu_EB, h1D_FRmu_EE);
             FRWeightProd=fr;
             FRWeightSum=fr;
+            FRWeightSumCorrL3=fr3;
+            FRWeightSumCorrL4=fr4;
+            if (lep_iso[2] > lep_iso[3]) {
+                FRWeightSumCorrIso=fr3;
+            } else {
+
+                FRWeightSumCorrIso=fr4;
+            }
+            FRWeightProdCorr=fr;
 
             newtree->Fill();
         }
@@ -188,30 +212,20 @@ void MakeFRWeight(TTree* tree, TTree* newtree, bool isData, TString filename){
             float fr = (fr3/(1-fr3)) * (fr4/(1-fr4)); 
             FRWeightProd=fr;
             FRWeightSum=fr3/(1-fr3)+fr4/(1-fr4);
+            FRWeightSumCorrL3=fr3;
+            FRWeightSumCorrL4=fr4;
+            if (lep_iso[2] > lep_iso[3]) {
+                FRWeightSumCorrIso=fr3;
+            } else {
+
+                FRWeightSumCorrIso=fr4;
+            }
+            float dr2 = deltaR2(etaL[2],phiL[2],etaL[3],phiL[3]);
+            float drIso = 0.3;
+            FRWeightProdCorr = ( fr3*fr4*dr2/4./drIso/drIso + sqrt(fr3*fr4)*(1.-sqrt(dr2)/2./drIso) ) / ( (1.-fr3)*(1.-fr4)*dr2/4./drIso/drIso + sqrt((1.-fr3)*(1.-fr4))*(1.-sqrt(dr2)/2./drIso) );  
 
             newtree->Fill();
         }
-
-        //float lepPt,fr;
-        //unsigned int i;
-        //for(i = 0; i <= 3; i++) {
-        //    if (!(abs((*lep_id)[(*lep_Hindex_stdvec)[i]])==11 && ((*lep_tightId)[(*lep_Hindex_stdvec)[i]] && (*lep_RelIsoNoFSR)[(*lep_Hindex_stdvec)[i]]<isoCutEl)) &&
-        //        !(abs((*lep_id)[(*lep_Hindex_stdvec)[i]])==13 && ((*lep_tightId)[(*lep_Hindex_stdvec)[i]] && (*lep_RelIsoNoFSR)[(*lep_Hindex_stdvec)[i]]<isoCutMu))){
-        //        lepPt = (*lep_pt)[(*lep_Hindex_stdvec)[i]];
-        //        if ( abs((*lep_id)[(*lep_Hindex_stdvec)[i]])==11 && abs((*lep_eta)[(*lep_Hindex_stdvec)[i]])<1.479 ) {
-        //            fr = getFR(lepPt,h_el_fr_br);
-        //        } else if ( abs((*lep_id)[(*lep_Hindex_stdvec)[i]])==11 && abs((*lep_eta)[(*lep_Hindex_stdvec)[i]])<2.5 ) {
-        //            fr = getFR(lepPt,h_el_fr_ec);
-        //        } else if ( abs((*lep_id)[(*lep_Hindex_stdvec)[i]])==13 && abs((*lep_eta)[(*lep_Hindex_stdvec)[i]])<1.2 ) {
-        //            fr = getFR(lepPt,h_mu_fr_br);
-        //        } else if ( abs((*lep_id)[(*lep_Hindex_stdvec)[i]])==13 && abs((*lep_eta)[(*lep_Hindex_stdvec)[i]])<2.5 ) {
-        //            fr = getFR(lepPt,h_mu_fr_ec);
-        //        };  
-        //    FRWeight = FRWeight*fr/(1.-fr);
-        //    };
-        //};
-    
-        //newtree->Fill();
 
     }; // Event loop
 
@@ -219,85 +233,66 @@ void MakeFRWeight(TTree* tree, TTree* newtree, bool isData, TString filename){
     muFile->Close();
 };
 
+void SetPedjaTree(TTree* tree){
 
-void DrawZ1LPlot(TTree* tree,bool isData){
-    
-    ZZ4LAnalysisTree::setAddresses(tree, filename);
+   tree->SetBranchStatus("*",0);
+   tree->SetBranchStatus("Run",1);
+   tree->SetBranchStatus("LumiSect",1);
+   tree->SetBranchStatus("Event",1);
+   tree->SetBranchStatus("nVtx",1);
+   tree->SetBranchStatus("passedFullSelection",1);
+   tree->SetBranchStatus("passedZ4lSelection",1);
+   tree->SetBranchStatus("passedZXCRSelection",1);
+   tree->SetBranchStatus("finalState",1);
+   tree->SetBranchStatus("dataMCWeight",1);
+   tree->SetBranchStatus("pileupWeight",1);
+   tree->SetBranchStatus("genWeight",1);
+   tree->SetBranchStatus("sumWeight",1);
+   tree->SetBranchStatus("crossSection",1);
+   tree->SetBranchStatus("lep_id",1);
+   tree->SetBranchStatus("lep_pt",1);
+   tree->SetBranchStatus("lep_eta",1);
+   tree->SetBranchStatus("lep_phi",1);
+   tree->SetBranchStatus("lep_mass",1);
+   tree->SetBranchStatus("lep_tightId",1);
+   tree->SetBranchStatus("lep_RelIsoNoFSR",1);
+   tree->SetBranchStatus("lep_Hindex",1);
+   tree->SetBranchStatus("deltaphiZZ",1);
+   tree->SetBranchStatus("mass4l",1);
+   tree->SetBranchStatus("massZ1",1);
+   tree->SetBranchStatus("massZ2",1);
+   tree->SetBranchStatus("met",1);
+   tree->SetBranchStatus("nFailedLeptonsZ2",1);
 
-    int firstevt=0; int lastevt=tree->GetEntries();
+   tree->SetBranchAddress("Run", &Run);
+   tree->SetBranchAddress("Event", &Event);
+   tree->SetBranchAddress("LumiSect", &LumiSect);
+   tree->SetBranchAddress("nVtx", &nVtx);
+   tree->SetBranchAddress("passedTrig", &passedTrig);
+   tree->SetBranchAddress("passedFullSelection", &passedFullSelection);
+   tree->SetBranchAddress("passedZ4lSelection", &passedZ4lSelection);
+   tree->SetBranchAddress("passedZXCRSelection", &passedZXCRSelection);
+   tree->SetBranchAddress("finalState", &finalState);
+   tree->SetBranchAddress("dataMCWeight", &dataMCWeight);
+   tree->SetBranchAddress("pileupWeight", &pileupWeight);
+   tree->SetBranchAddress("genWeight", &genWeight);
+   tree->SetBranchAddress("sumweight", &sumweight);
+   tree->SetBranchAddress("crossSection", &crossSection);
+   tree->SetBranchAddress("lep_id", &lep_id);
+   tree->SetBranchAddress("lep_pt", &lep_pt);
+   tree->SetBranchAddress("lep_eta", &lep_eta);
+   tree->SetBranchAddress("lep_phi", &lep_phi);
+   tree->SetBranchAddress("lep_mass", &lep_mass);
+   tree->SetBranchAddress("lep_tightId", &lep_tightId);
+   tree->SetBranchAddress("lep_RelIsoNoFSR", &lep_RelIsoNoFSR);
+   tree->SetBranchAddress("lep_Hindex", &lep_Hindex);
+   tree->SetBranchAddress("deltaphiZZ", &deltaphiZZ);
+   tree->SetBranchAddress("mass4l", &mass4l);
+   tree->SetBranchAddress("massZ1", &massZ1);
+   tree->SetBranchAddress("massZ2", &massZ2);
+   tree->SetBranchAddress("met", &met);
+   tree->SetBranchAddress("nFailedLeptonsZ2", &nFailedLeptonsZ2);
 
-    TH1D* h1D_loose_mu_br_pt   = new TH1D("h1D_loose_mu_br_pt","",10,0.,200.);
-    TH1D* h1D_tight_mu_br_pt   = new TH1D("h1D_tight_mu_br_pt","",10,0.,200.);
-    TH1D* h1D_loose_ele_br_pt  = new TH1D("h1D_loose_ele_br_pt","",10,0.,200.);
-    TH1D* h1D_tight_ele_br_pt  = new TH1D("h1D_tight_ele_br_pt","",10,0.,200.);
-    TH1D* h1D_loose_mu_ec_pt   = new TH1D("h1D_loose_mu_ec_pt","",10,0.,200.);
-    TH1D* h1D_tight_mu_ec_pt   = new TH1D("h1D_tight_mu_ec_pt","",10,0.,200.);
-    TH1D* h1D_loose_ele_ec_pt  = new TH1D("h1D_loose_ele_ec_pt","",10,0.,200.);
-    TH1D* h1D_tight_ele_ec_pt  = new TH1D("h1D_tight_ele_ec_pt","",10,0.,200.);
-
-    h1D_loose_mu_br_pt->Sumw2();
-    h1D_tight_mu_br_pt->Sumw2();
-    h1D_loose_ele_br_pt->Sumw2();
-    h1D_tight_ele_br_pt->Sumw2();
-    h1D_loose_mu_ec_pt->Sumw2();
-    h1D_tight_mu_ec_pt->Sumw2();
-    h1D_loose_ele_ec_pt->Sumw2();
-    h1D_tight_ele_ec_pt->Sumw2();
-   
-    for(int evt=0; evt < tree->GetEntries(); evt++) { //event loop
-    
-        if (evt<firstevt) continue;
-        if (evt>lastevt) continue;
-       
-        if(evt%print_per_event==0) cout<<"Event "<<evt<<"/"<<tree->GetEntries()<<endl;
-        tree->GetEntry(evt);
-
-        if ( abs(Zmass-massZ1)<deltaZmass) continue;
-       
-        float weight; 
-        if (isData) {
-            weight = 1.;
-        } else {
-            weight = dataMCWeight*pileupWeight*lumi/sumweight;
-        };
-
-        if ( abs((*lep_eta)[lep_Hindex[2]])<1.4 ) {
-            if ( abs( (*lep_id)[lep_Hindex[2]] )==13 ) {
-                h1D_loose_mu_br_pt->Fill((*lep_pt)[lep_Hindex[2]],weight);
-                if ( (*lep_tightId)[lep_Hindex[2]] && (*lep_RelIsoNoFSR)[lep_Hindex[2]]<isoCutMu ) {
-                    h1D_tight_mu_br_pt->Fill((*lep_pt)[lep_Hindex[2]],weight);
-                };
-            } else if ( abs( (*lep_id)[lep_Hindex[2]] )==11 ) {
-                h1D_loose_ele_br_pt->Fill((*lep_pt)[lep_Hindex[2]],weight);
-                if ( (*lep_tightId)[lep_Hindex[2]] && (*lep_RelIsoNoFSR)[lep_Hindex[2]]<isoCutEl ) {
-                    h1D_tight_ele_br_pt->Fill((*lep_pt)[lep_Hindex[2]],weight);
-                };
-            };    
-        } else if ( abs((*lep_eta)[lep_Hindex[2]])<2.5 ) {
-            if ( abs( (*lep_id)[lep_Hindex[2]] )==13 ) {
-                h1D_loose_mu_ec_pt->Fill((*lep_pt)[lep_Hindex[2]],weight);
-                if ( (*lep_tightId)[lep_Hindex[2]] && (*lep_RelIsoNoFSR)[lep_Hindex[2]]<isoCutMu ) {
-                    h1D_tight_mu_ec_pt->Fill((*lep_pt)[lep_Hindex[2]],weight);
-                };
-            } else if ( abs( (*lep_id)[lep_Hindex[2]] )==11 ) {
-                h1D_loose_ele_ec_pt->Fill((*lep_pt)[lep_Hindex[2]],weight);
-                if ( (*lep_tightId)[lep_Hindex[2]] && (*lep_RelIsoNoFSR)[lep_Hindex[2]]<isoCutEl ) {
-                    h1D_tight_ele_ec_pt->Fill((*lep_pt)[lep_Hindex[2]],weight);
-                };
-
-            };
-        };
-
-    }; // Event loop    
-    
-    TH1D* fr_mu_br_pt = (TH1D*) h1D_tight_mu_br_pt->Clone("FakeRate_mu_br_pt");
-    TH1D* fr_ele_br_pt = (TH1D*) h1D_tight_ele_br_pt->Clone("FakeRate_ele_br_pt");   
-    TH1D* fr_mu_ec_pt = (TH1D*) h1D_tight_mu_ec_pt->Clone("FakeRate_mu_ec_pt");
-    TH1D* fr_ele_ec_pt = (TH1D*) h1D_tight_ele_ec_pt->Clone("FakeRate_ele_ec_pt");
-    fr_mu_br_pt->Divide(h1D_loose_mu_br_pt);
-    fr_ele_br_pt->Divide(h1D_loose_ele_br_pt);
-    fr_mu_ec_pt->Divide(h1D_loose_mu_ec_pt);
-    fr_ele_ec_pt->Divide(h1D_loose_ele_ec_pt);
 }
 
 void SetNewTree(TTree* tree){

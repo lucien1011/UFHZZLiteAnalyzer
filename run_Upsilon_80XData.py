@@ -5,14 +5,18 @@ isDarkPhotonReco = True
 if isDarkPhotonReco: 
     dataInfos = [
         [
-            "/raid/raid7/lucien/Higgs/DarkZ-NTuple/20180905/SkimTree_Upsilon_Run2016Data_v1/",
+            #"/raid/raid7/lucien/Higgs/DarkZ-NTuple/20180905/SkimTree_Upsilon_Run2016Data_v1/",
+            #["Data_Run2016-03Feb2017_4l_1"],
+            #"/raid/raid7/lucien/Higgs/DarkZ-NTuple/20180910/SkimTree_Upsilon_ZX_Run2016Data/",
+            #["Data_Run2016_noDuplicates"],
+            "/raid/raid7/lucien/Higgs/DarkZ-NTuple/20180914/SkimTree_Upsilon_Run2016Data_v1/",
             ["Data_Run2016-03Feb2017_4l_1"],
         ],
         ]
 else:
     dataInfos = [
         [
-            "root://cmsio5.rc.ufl.edu//store/user/t2/users/dsperka/Run2/HZZ4l/SubmitArea_13TeV/rootfiles_Data80X_4lskim_M17_Feb21/",
+            "root://cmsio5.rc.ufl.edu//store/user/t2/users/archived/dsperka/Run2/HZZ4l/SubmitArea_13TeV/rootfiles_Data80X_4lskim_M17_Feb21/",
             ["Data_Run2016-03Feb2017_4l"],
         ],
         ]
@@ -22,9 +26,12 @@ else:
 # Configuration
 infos            = dataInfos
 if isDarkPhotonReco: 
-    outputDir       = "/raid/raid7/lucien/Higgs/DarkZ-NTuple/20180905/SkimTree_Upsilon_Run2016Data_v1_DarkPhotonReco/"
+    #outputDir       = "/raid/raid7/lucien/Higgs/DarkZ-NTuple/20180905/SkimTree_Upsilon_Run2016Data_v1_DarkPhotonReco/"
+    #outputDir       = "/raid/raid7/lucien/Higgs/DarkZ-NTuple/20180910/SkimTree_Upsilon_ZX_Run2016Data_DarkPhotonReco/"
+    outputDir       = "/raid/raid7/lucien/Higgs/DarkZ-NTuple/20180914/SkimTree_Upsilon_Run2016Data_v1_DarkPhotonReco/"
 else:
-    outputDir       = "/raid/raid7/lucien/Higgs/DarkZ-NTuple/20180905/SkimTree_Upsilon_Run2016Data_v1/"
+    #outputDir       = "/raid/raid7/lucien/Higgs/DarkZ-NTuple/20180905/SkimTree_Upsilon_Run2016Data_v1/"
+    outputDir       = "/raid/raid7/lucien/Higgs/DarkZ-NTuple/20180914/SkimTree_Upsilon_Run2016Data_v1/"
 
 if not os.path.exists(os.path.abspath(outputDir)):
     os.makedirs(outputDir)

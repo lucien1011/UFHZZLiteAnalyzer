@@ -101,10 +101,10 @@ void getEstimateZX(TString slimmedZXFileName, double ptElCut, double ptMuCut, do
     // get the FR histograms and slimmed ZX tree
     //TString elFilePath = "/home/lucien/UF-PyNTupleRunner/DarkZ/Data/FakeRate/fakeRates_el_v2.root";
     //TString muFilePath = "/home/lucien/UF-PyNTupleRunner/DarkZ/Data/FakeRate/fakeRates_mu_v2.root";
-    //TString elFilePath = "/home/lucien/UF-PyNTupleRunner/DarkZ/Data/FakeRate/fakeRates_el.root";
-    //TString muFilePath = "/home/lucien/UF-PyNTupleRunner/DarkZ/Data/FakeRate/fakeRates_mu.root";
-    TString elFilePath = "/home/lucien/Higgs/DarkZ/CMSSW_9_4_2/src/liteUFHZZ4LAnalyzer/fakeRate.root";   
-    TString muFilePath = "/home/lucien/Higgs/DarkZ/CMSSW_9_4_2/src/liteUFHZZ4LAnalyzer/fakeRate.root";   
+    TString elFilePath = "/home/lucien/UF-PyNTupleRunner/DarkZ/Data/FakeRate/fakeRates_el.root";
+    TString muFilePath = "/home/lucien/UF-PyNTupleRunner/DarkZ/Data/FakeRate/fakeRates_mu.root";
+    //TString elFilePath = "/home/lucien/Higgs/DarkZ/CMSSW_9_4_2/src/liteUFHZZ4LAnalyzer/fakeRate.root";   
+    //TString muFilePath = "/home/lucien/Higgs/DarkZ/CMSSW_9_4_2/src/liteUFHZZ4LAnalyzer/fakeRate.root";   
 
     TFile* elFile = new TFile(elFilePath,"READ");
     TH1D* h1D_FRel_EB = (TH1D*) elFile->Get("h1D_FRel_EB");

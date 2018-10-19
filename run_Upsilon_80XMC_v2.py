@@ -1,6 +1,6 @@
 import os, time
 
-isDarkPhotonReco = False
+isDarkPhotonReco = True
 
 # ____________________________________________________________________________________________________________ ||
 #mcInfos = [
@@ -68,19 +68,20 @@ if not isDarkPhotonReco:
         ],
         ]
 else:
-    basedir = "/raid/raid7/lucien/Higgs/DarkZ-NTuple/20180905/SkimTree_Upsilon_Run2016Data_v1/"
+    #basedir = "/raid/raid7/lucien/Higgs/DarkZ-NTuple/20180905/SkimTree_Upsilon_Run2016Data_v1/"
+    basedir = "/raid/raid7/lucien/Higgs/DarkZ-NTuple/20180914/SkimTree_Upsilon_Run2016Data_v1/"
     mcInfos = [
-        [
-            basedir,
+        #[
+        #    basedir,
             #["ZZTo4L_13TeV-amcatnloFXFX-pythia8_RunIISummer16MiniAODv2",],
-            ["ZZTo4L_13TeV_powheg_pythia8_RunIISummer16MiniAODv2_1",],
-        ],
+            #["ZZTo4L_13TeV_powheg_pythia8_RunIISummer16MiniAODv2_1",],
+        #],
         [
             basedir,
             [   
-                "GluGluToContinToZZTo2e2mu_13TeV_MCFM701_pythia8_RunIISummer16MiniAODv2_1",
-                "GluGluToContinToZZTo2mu2tau_13TeV_MCFM701_pythia8_RunIISummer16MiniAODv2_1",
-                "GluGluToContinToZZTo4mu_13TeV_MCFM701_pythia8_RunIISummer16MiniAODv2_1",
+                #"GluGluToContinToZZTo2e2mu_13TeV_MCFM701_pythia8_RunIISummer16MiniAODv2_1",
+                #"GluGluToContinToZZTo2mu2tau_13TeV_MCFM701_pythia8_RunIISummer16MiniAODv2_1",
+                #"GluGluToContinToZZTo4mu_13TeV_MCFM701_pythia8_RunIISummer16MiniAODv2_1",
                 "GluGluToContinToZZTo2e2tau_13TeV_MCFM701_pythia8_RunIISummer16MiniAODv2_1",  
                 "GluGluToContinToZZTo4e_13TeV_MCFM701_pythia8_RunIISummer16MiniAODv2_1", 
                 "GluGluToContinToZZTo4tau_13TeV_MCFM701_pythia8_RunIISummer16MiniAODv2_1",
@@ -95,7 +96,8 @@ else:
 infos            = mcInfos
 
 if isDarkPhotonReco: 
-    outputDir       = "/raid/raid7/lucien/Higgs/DarkZ-NTuple/20180905/SkimTree_Upsilon_Run2016Data_v1_DarkPhotonReco/"
+    #outputDir       = "/raid/raid7/lucien/Higgs/DarkZ-NTuple/20180905/SkimTree_Upsilon_Run2016Data_v1_DarkPhotonReco/"
+    outputDir       = "/raid/raid7/lucien/Higgs/DarkZ-NTuple/20180914/SkimTree_Upsilon_Run2016Data_v1_DarkPhotonReco/"
 else:
     outputDir       = "/raid/raid7/lucien/Higgs/DarkZ-NTuple/20180914/SkimTree_Upsilon_Run2016Data_v1/"
 

@@ -15,10 +15,10 @@ double m4lHighCut=9999999.;
 double mZ2High=999999.;
 double mZ2Low=0.;
 
-//double mZ1Low=8.96;
-//double mZ1High=9.96;
-double mZ1Low=4.;
-double mZ1High=20.;
+double mZ1Low=2.596916;
+double mZ1High=3.596916;
+//double mZ1Low=0.;
+//double mZ1High=20.;
 
 float dxycut=0.5;
 float dzcut=1.0;

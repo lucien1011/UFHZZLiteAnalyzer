@@ -10,10 +10,13 @@ mcInfos = [
         [
             basedir,
             [
-                "ZD_UpTo0j_MZD15_Eps1e-2_klo",
-                "ZD_UpTo0j_MZD20_Eps1e-2_klo",
-                "ZD_UpTo0j_MZD25_Eps1e-2_klo",
-                "ZD_UpTo0j_MZD30_Eps1e-2_klo",
+                "ZD_UpTo0j_MZD4_Eps1e-2_klo",
+                "ZD_UpTo0j_MZD7_Eps1e-2_klo",
+                "ZD_UpTo0j_MZD10_Eps1e-2_klo",
+                #"ZD_UpTo0j_MZD15_Eps1e-2_klo",
+                #"ZD_UpTo0j_MZD20_Eps1e-2_klo",
+                #"ZD_UpTo0j_MZD25_Eps1e-2_klo",
+                #"ZD_UpTo0j_MZD30_Eps1e-2_klo",
             ],
         ],
     ]
