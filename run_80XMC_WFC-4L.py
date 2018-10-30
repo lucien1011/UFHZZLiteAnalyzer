@@ -22,6 +22,11 @@ mcInfos = [
                 "DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8_RunIISummer16MiniAODv2",
             ],
         ],
+        [
+            'root://cmsio5.rc.ufl.edu//store/user/t2/users/archived/dsperka/Run2/HZZ4l/SubmitArea_13TeV/rootfiles_MC80X_4lskim_M17_Feb21/',
+            #["ZZTo4L_13TeV-amcatnloFXFX-pythia8_RunIISummer16MiniAODv2",],
+            ["ZZTo4L_13TeV_powheg_pythia8_RunIISummer16MiniAODv2",],
+        ],
     ]
 
 # ____________________________________________________________________________________________________________ ||
