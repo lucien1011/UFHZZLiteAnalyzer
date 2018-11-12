@@ -1,7 +1,5 @@
 #include "deltaR.h"
 #include "ZXTree.h"
-//#include "LeptonEfficiency.h"
-//#include "PileupWeight.h"
 #include "Helper.h"
 #include "ZXWeightConfig.h"
 #include <math.h>
@@ -9,7 +7,13 @@
 using namespace std;  
 
 TTree* GetTree(TFile* infile);
-void MakeFRWeight(TTree* tree, TTree* newtree, bool isData, TString filename, TString inputType);
+
+void MakeFRWeight(
+        TTree* tree, TTree* newtree, bool isData, TString filename, 
+        TString elFilePath, TString muFilePath, 
+        TString inputType
+        );
+
 //float getFR(float lepPt, TH1D* hist);
 double getFR(int lep_id, double lep_pt, double lep_eta, TH1D* h1D_FRel_EB,   TH1D* h1D_FRel_EE,   TH1D* h1D_FRmu_EB,   TH1D* h1D_FRmu_EE);
 void SetNewTree(TTree* tree);
@@ -20,11 +24,11 @@ bool debug;
 TString mode;
 bool isData;
 float FRWeightProd;
-float FRWeightProdCorr;
 float FRWeightSum;
-float FRWeightSumCorrL3;
-float FRWeightSumCorrL4;
-float FRWeightSumCorrIso;
+float FRWeightL3;
+float FRWeightL4;
+float FRWeightProd_UniIso;
+float FRWeightProd_AsymIso;
 
 int main(int argc, char *argv[])
 {    
@@ -41,6 +45,8 @@ int main(int argc, char *argv[])
     TString outfilename = argv[4];
     isData = atof(argv[5]) > 0;
     TString inputType = argv[6];
+    TString elFilePath = argv[7];
+    TString muFilePath = argv[8];
 
     if (!isData) {
         TFile* sumWeightfile = TFile::Open(sumWeightFilename+".root");
@@ -57,7 +63,7 @@ int main(int argc, char *argv[])
     TTree* newtree = tree->CloneTree(0);
     newtree->CopyAddresses(tree);
 
-    MakeFRWeight(tree,newtree,isData,filename,inputType);
+    MakeFRWeight(tree,newtree,isData,filename,elFilePath,muFilePath,inputType);
 
     tmpFile->cd();
     if (inputType=="liteHZZ") {
@@ -94,7 +100,15 @@ double getFR(int lep_id, float lep_pt, float lep_eta, TH1D* h1D_FRel_EB,   TH1D*
     return 0;
 }
 
-void MakeFRWeight(TTree* tree, TTree* newtree, bool isData, TString filename, TString inputType="liteHZZ"){
+void MakeFRWeight(
+        TTree* tree, 
+        TTree* newtree, 
+        bool isData, 
+        TString filename, 
+        TString elFilePath,
+        TString muFilePath,
+        TString inputType="liteHZZ"
+        ){
     
     // ZZ4LAnalysisTree::setAddresses(tree, filename);
     if (inputType=="liteHZZ") {
@@ -106,11 +120,11 @@ void MakeFRWeight(TTree* tree, TTree* newtree, bool isData, TString filename, TS
     int firstevt=0; int lastevt=tree->GetEntries();
 
     newtree->Branch("FRWeightProd",&FRWeightProd,"FRWeightProd/F");
-    newtree->Branch("FRWeightProdCorr",&FRWeightProdCorr,"FRWeightProdCorr/F");
     newtree->Branch("FRWeightSum",&FRWeightSum,"FRWeightSum/F");
-    newtree->Branch("FRWeightSumCorrL3",&FRWeightSumCorrL3,"FRWeightSumCorrL3/F");
-    newtree->Branch("FRWeightSumCorrL4",&FRWeightSumCorrL4,"FRWeightSumCorrL4/F");
-    newtree->Branch("FRWeightSumCorrIso",&FRWeightSumCorrIso,"FRWeightSumCorrIso/F");
+    newtree->Branch("FRWeightL3",&FRWeightL3,"FRWeightSumCorrL3/F");
+    newtree->Branch("FRWeightL4",&FRWeightL4,"FRWeightSumCorrL4/F");
+    newtree->Branch("FRWeightProd_UniIso",&FRWeightProd_UniIso,"FRWeightProd_UniIso/F");
+    newtree->Branch("FRWeightProd_AsymIso",&FRWeightProd_AsymIso,"FRWeightProd_AsymIso/F");
     newtree->Branch("nFailedLeptonsZ2",&nFailedLeptonsZ2,"nFailedLeptonsZ2/I");
     
     TFile* elFile = new TFile(elFilePath,"READ");
@@ -173,34 +187,34 @@ void MakeFRWeight(TTree* tree, TTree* newtree, bool isData, TString filename, TS
             pTL[k]  = lep.Pt();
             etaL[k] = lep.Eta();
             phiL[k] = lep.Phi();
-            if ( !(abs(idL[k])==11 && lep_tight[k] && lep_iso[k]<0.35) && !(abs(idL[k])==13 && lep_tight[k] && lep_iso[k]<0.35)  ) {
+            if ( !(abs(idL[k])==11 && lep_tight[k] && lep_iso[k]<isoCutEl) && !(abs(idL[k])==13 && lep_tight[k] && lep_iso[k]<isoCutMu)  ) {
                 index_vec.push_back(k);
                 //nFailedLeptonsZ2++;
             }
         };
 
         if (inputType=="liteHZZ") {
-            nFailedLeptonsZ2 = !(lep_tight[2] && ((abs(idL[2])==11 && lep_iso[2]<0.35) || (abs(idL[2])==13 && lep_iso[2]<0.35))) + !(lep_tight[3] && ((abs(idL[3])==11 && lep_iso[3]<0.35) || (abs(idL[3])==13 && lep_iso[3]<0.35)));
+            nFailedLeptonsZ2 = !(lep_tight[2] && ((abs(idL[2])==11 && lep_iso[2]<isoCutEl) || (abs(idL[2])==13 && lep_iso[2]<isoCutMu))) + !(lep_tight[3] && ((abs(idL[3])==11 && lep_iso[3]<isoCutEl) || (abs(idL[3])==13 && lep_iso[3]<isoCutMu)));
         };
 
         if (nFailedLeptonsZ2 == 1) {
             float fr3 = getFR(idL[2], pTL[2], etaL[2], h1D_FRel_EB, h1D_FRel_EE, h1D_FRmu_EB, h1D_FRmu_EE);
             float fr4 = getFR(idL[3], pTL[3], etaL[3], h1D_FRel_EB, h1D_FRel_EE, h1D_FRmu_EB, h1D_FRmu_EE);
-            float fr = (!(lep_tight[2] && ((abs(idL[2])==11 && lep_iso[2]<0.35) || (abs(idL[2])==13 && lep_iso[2]<0.35))))*(fr3/(1-fr3)) +
-                        (!(lep_tight[3] && ((abs(idL[3])==11 && lep_iso[3]<0.35) || (abs(idL[3])==13 && lep_iso[3]<0.35))))*(fr4/(1-fr4));
+            float fr = (!(lep_tight[2] && ((abs(idL[2])==11 && lep_iso[2]<isoCutEl) || (abs(idL[2])==13 && lep_iso[2]<isoCutMu))))*(fr3/(1-fr3)) +
+                        (!(lep_tight[3] && ((abs(idL[3])==11 && lep_iso[3]<isoCutEl) || (abs(idL[3])==13 && lep_iso[3]<isoCutMu))))*(fr4/(1-fr4));
             
             //float fr3 = getFR(idL[index_vec.at(0)], pTL[index_vec.at(0)], etaL[index_vec.at(0)], h1D_FRel_EB, h1D_FRel_EE, h1D_FRmu_EB, h1D_FRmu_EE);
             FRWeightProd=fr;
             FRWeightSum=fr;
-            FRWeightSumCorrL3=fr3;
-            FRWeightSumCorrL4=fr4;
+            FRWeightL3=fr3;
+            FRWeightL4=fr4;
             if (lep_iso[2] > lep_iso[3]) {
-                FRWeightSumCorrIso=fr3;
+                FRWeightProd_AsymIso=fr3;
             } else {
 
-                FRWeightSumCorrIso=fr4;
+                FRWeightProd_AsymIso=fr4;
             }
-            FRWeightProdCorr=fr;
+            FRWeightProd_UniIso=fr;
 
             newtree->Fill();
         }
@@ -212,17 +226,17 @@ void MakeFRWeight(TTree* tree, TTree* newtree, bool isData, TString filename, TS
             float fr = (fr3/(1-fr3)) * (fr4/(1-fr4)); 
             FRWeightProd=fr;
             FRWeightSum=fr3/(1-fr3)+fr4/(1-fr4);
-            FRWeightSumCorrL3=fr3;
-            FRWeightSumCorrL4=fr4;
+            FRWeightL3=fr3/(1-fr3);
+            FRWeightL4=fr4/(1-fr4);
             if (lep_iso[2] > lep_iso[3]) {
-                FRWeightSumCorrIso=fr3;
+                FRWeightProd_AsymIso=fr3;
             } else {
 
-                FRWeightSumCorrIso=fr4;
+                FRWeightProd_AsymIso=fr4;
             }
             float dr2 = deltaR2(etaL[2],phiL[2],etaL[3],phiL[3]);
             float drIso = 0.3;
-            FRWeightProdCorr = ( fr3*fr4*dr2/4./drIso/drIso + sqrt(fr3*fr4)*(1.-sqrt(dr2)/2./drIso) ) / ( (1.-fr3)*(1.-fr4)*dr2/4./drIso/drIso + sqrt((1.-fr3)*(1.-fr4))*(1.-sqrt(dr2)/2./drIso) );  
+            FRWeightProd_UniIso = ( fr3*fr4*dr2/4./drIso/drIso + sqrt(fr3*fr4)*(1.-sqrt(dr2)/2./drIso) ) / ( (1.-fr3)*(1.-fr4)*dr2/4./drIso/drIso + sqrt((1.-fr3)*(1.-fr4))*(1.-sqrt(dr2)/2./drIso) );  
 
             newtree->Fill();
         }

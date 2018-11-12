@@ -9,7 +9,7 @@ import os
 
 #inputFile       = "/raid/raid7/lucien/Higgs/DarkZ-NTuple/20180806/SkimTree_Data80X_HIG-16-041-ZXCRSelection/Data_Run2016_noDuplicates"
 #inputFile       = "/raid/raid7/lucien/Higgs/DarkZ-NTuple/20180806/SkimTree_Data80X_HIG-16-041-ZXCRSelection_v2/Data_Run2016_noDuplicates"
-inputFile       = "/raid/raid7/lucien/Higgs/DarkZ-NTuple/20180820/SkimTree_DarkPhoton_ZX_Run2016Data_v1/Data_Run2016_noDuplicates"
+#inputFile       = "/raid/raid7/lucien/Higgs/DarkZ-NTuple/20180820/SkimTree_DarkPhoton_ZX_Run2016Data_v1/Data_Run2016_noDuplicates"
 #inputFile       = "/raid/raid7/lucien/Higgs/DarkZ-NTuple/20180823/SkimTree_Data80X_HIG-16-041-ZXCRSelectionWithFlag_v3_liteHZZAna/Data_Run2016_noDuplicates_1"
 #inputFile       = "/raid/raid7/lucien/Higgs/DarkZ-NTuple/20180910/SkimTree_Upsilon_ZX_Run2016Data_DarkPhotonReco/Data_Run2016_noDuplicates_1"
 #inputFile       = "/raid/raid7/lucien/Higgs/DarkZ-NTuple/20180914/SkimTree_Upsilon_ZX_Run2016Data_DarkPhotonReco/Data_Run2016_noDuplicates_1"
@@ -32,9 +32,13 @@ mode            = "MakeFRWeight"
 #outputFile      = "/raid/raid7/lucien/Higgs/DarkZ-NTuple/20180924/SkimTree_DarkPhoton_ZX_Run2016Data_v1/Data_Run2016_noDuplicates_FRWeightCorr"
 outputFile      = "/raid/raid7/lucien/Higgs/DarkZ-NTuple/20180924/SkimTree_DarkPhoton_ZX_Run2016Data_m4l70/Data_Run2016_noDuplicates_FRWeightCorrMyFR"
 
+#elFilePath = "/home/lucien/UF-PyNTupleRunner/DarkZ/Data/FakeRate/fakeRates_el_v2.root";
+#muFilePath = "/home/lucien/UF-PyNTupleRunner/DarkZ/Data/FakeRate/fakeRates_mu_v2.root";
+elFilePath = "/home/lucien/Higgs/DarkZ/CMSSW_9_4_2/src/liteUFHZZ4LAnalyzer/Data/fakeRate.root";
+muFilePath = "/home/lucien/Higgs/DarkZ/CMSSW_9_4_2/src/liteUFHZZ4LAnalyzer/Data/fakeRate.root";
 # ________________________________________________________________________________________________________________________________________________ ||
 dirname = os.path.dirname(os.path.abspath(outputFile+".root"))
 if not os.path.exists(dirname):
     os.makedirs(dirname)
-cmd = " ".join(["./ZX_Weight.exe",mode,inputFile,sumWeightFile,outputFile,isData,inputType])
+cmd = " ".join(["./ZX_Weight.exe",mode,inputFile,sumWeightFile,outputFile,isData,inputType,elFilePath,muFilePath,])
 os.system(cmd)

@@ -51,8 +51,8 @@ const double CUT_MZ1HIGH = 120.;
 const double CUT_MZ2LOW = 4.;
 const double CUT_MZ2HIGH = 120.;
 const double CUT_METHIGH = 100.;
-const double CUT_M4LLOW = 105.;
-const double CUT_M4LHIGH = 140.;
+const double CUT_M4LLOW = 70.;
+const double CUT_M4LHIGH = 999999.;
 const double CUT_M4LLOW_FULL = 0.; 
 const double CUT_M4LHIGH_FULL = 1000.;
 const TString sPlotsStore = "plotsZX/";
@@ -64,8 +64,19 @@ int printOutWidth = 12;
 int printOutPrecision = 3;
 long int lNEvents = 1;
 //TString slimmedZXFileName="/raid/raid7/lucien/Higgs/DarkZ-NTuple/20180820/SkimTree_DarkPhoton_ZX_Run2016Data_v1/Data_Run2016_noDuplicates.root";
-TString slimmedZXFileName="/raid/raid7/lucien/Higgs/DarkZ-NTuple/20180823/SkimTree_Data80X_HIG-16-041-ZXCRSelectionWithFlag_v3_liteHZZAna/Data_Run2016_noDuplicates_1.root";
+//TString slimmedZXFileName="/raid/raid7/lucien/Higgs/DarkZ-NTuple/20180823/SkimTree_Data80X_HIG-16-041-ZXCRSelectionWithFlag_v3_liteHZZAna/Data_Run2016_noDuplicates_1.root";
 //TString slimmedZXFileName="/raid/raid5/predragm/Run2/HZZ4l/SubmitArea_13TeV/rootfiles_MC80X_2lskim_M17_Feb21/Data_ZX_Run2017-03Feb2017_slimmedZX.root";
+TString slimmedZXFileName="/raid/raid7/lucien/Higgs/DarkZ-NTuple/20181107/SkimTree_DarkPhoton_ZX_Run2017Data_m4l70/Data_Run2017_noDuplicates.root";
+
+// get the FR histograms and slimmed ZX tree
+//TString elFilePath = "/home/lucien/UF-PyNTupleRunner/DarkZ/Data/FakeRate/fakeRates_el_v2.root";
+//TString muFilePath = "/home/lucien/UF-PyNTupleRunner/DarkZ/Data/FakeRate/fakeRates_mu_v2.root";
+//TString elFilePath = "/home/lucien/UF-PyNTupleRunner/DarkZ/Data/FakeRate/fakeRates_el.root";
+//TString muFilePath = "/home/lucien/UF-PyNTupleRunner/DarkZ/Data/FakeRate/fakeRates_mu.root";
+//TString elFilePath = "/home/lucien/Higgs/DarkZ/CMSSW_9_4_2/src/liteUFHZZ4LAnalyzer/fakeRate.root";   
+//TString muFilePath = "/home/lucien/Higgs/DarkZ/CMSSW_9_4_2/src/liteUFHZZ4LAnalyzer/fakeRate.root";   
+TString elFilePath = "/home/lucien/Higgs/DarkZ/CMSSW_9_4_2/src/liteUFHZZ4LAnalyzer/Data/fakeRate2017.root";
+TString muFilePath = "/home/lucien/Higgs/DarkZ/CMSSW_9_4_2/src/liteUFHZZ4LAnalyzer/Data/fakeRate2017.root";
 
 double getFR(int lep_id, double lep_pt, double lep_eta, TH1D* h1D_FRel_EB,   TH1D* h1D_FRel_EE,   TH1D* h1D_FRmu_EB,   TH1D* h1D_FRmu_EE);
 void getEstimateZX(TString slimmedZXFileName, double ptElCut = CUT_ELPT, double ptMuCut = CUT_MUPT, double mZ2Cut = CUT_MZ2LOW);
@@ -96,15 +107,7 @@ void getEstimateZX(TString slimmedZXFileName, double ptElCut, double ptMuCut, do
 
     // common properties
     Width_t lineWidth = 2;
-    double leg_xl = 0.50, leg_xr = 0.90, leg_yb = 0.72, leg_yt = 0.90;
-
-    // get the FR histograms and slimmed ZX tree
-    //TString elFilePath = "/home/lucien/UF-PyNTupleRunner/DarkZ/Data/FakeRate/fakeRates_el_v2.root";
-    //TString muFilePath = "/home/lucien/UF-PyNTupleRunner/DarkZ/Data/FakeRate/fakeRates_mu_v2.root";
-    TString elFilePath = "/home/lucien/UF-PyNTupleRunner/DarkZ/Data/FakeRate/fakeRates_el.root";
-    TString muFilePath = "/home/lucien/UF-PyNTupleRunner/DarkZ/Data/FakeRate/fakeRates_mu.root";
-    //TString elFilePath = "/home/lucien/Higgs/DarkZ/CMSSW_9_4_2/src/liteUFHZZ4LAnalyzer/fakeRate.root";   
-    //TString muFilePath = "/home/lucien/Higgs/DarkZ/CMSSW_9_4_2/src/liteUFHZZ4LAnalyzer/fakeRate.root";   
+    double leg_xl = 0.50, leg_xr = 0.90, leg_yb = 0.72, leg_yt = 0.90; 
 
     TFile* elFile = new TFile(elFilePath,"READ");
     TH1D* h1D_FRel_EB = (TH1D*) elFile->Get("h1D_FRel_EB");
@@ -246,7 +249,10 @@ int getEstimatesFromCR(TTree* tree,
         //float weight = eventWeight*dataMCWeight*crossSection*LUMI_INT/lNEvents;
         float weight = 1.;
 
-        if (passedZXCRSelection) {
+        if (passedZXCRSelection &&
+                mass4l > CUT_M4LLOW &&
+                mass4l < CUT_M4LHIGH 
+                ) {
             nEvtPassedZXCRSelection++;
             
             int lep_tight[4];

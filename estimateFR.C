@@ -38,12 +38,20 @@
 using namespace std;
 
 TString t2_prefix="root://cmsio5.rc.ufl.edu/";
-TString file_path="/store/user/t2/users/klo/Higgs/DarkZ/NTuples/Z1LSkim/Run2016/Data_Run2016_noDuplicates.root";
+//TString file_path="/store/user/t2/users/klo/Higgs/DarkZ/NTuples/Z1LSkim/Run2016/Data_Run2016_noDuplicates.root";
+TString file_path="/store/user/t2/users/klo/Higgs/DarkZ/NTuples/ZPlusX_Early2017_v1/skimZ1L_Data_Run2017-17Nov2017_noDuplicates.root";
 TString slimmedZXFileName=t2_prefix+file_path;
 //TString slimmedZXFileName="/raid/raid7/lucien/Higgs/DarkZ-NTuple/20180820/SkimTree_DarkPhoton_ZX_Run2016Data_v1/Data_Run2016_noDuplicates.root";
 //TString slimmedZXFileName="/raid/raid7/lucien/Higgs/DarkZ-NTuple/20180823/SkimTree_Data80X_HIG-16-041-ZXCRSelect//ionWithFlag_v3_liteHZZAna/Data_Run2016_noDuplicates_1.root";
 //TString slimmedZXFileName="/raid/raid5/predragm/Run2/HZZ4l/SubmitArea_13TeV/rootfiles_MC80X_2lskim_M17_Feb21/Data_ZX_Run2017-03Feb2017_slimmedZX.root";
 //TString slimmedZXFileName="root://cmsio5.rc.ufl.edu//store/user/t2/users/dsperka/Run2/HZZ4l/SubmitArea_13TeV/rootfiles_Data80X_2lskim_M17_Feb21/SingleDoubleMuon_Run2016-03Feb2017.root";
+//TString slimmedZXFileName="root://cmsio5.rc.ufl.edu//store/user/t2/users/dsperka/Run2/HZZ4l/SubmitArea_13TeV/rootfiles_Data80X_2lskim_M17_Feb21/SingleDoubleMuon_Run2016-03Feb2017.root";
+
+TString outputPath = "Data/fakeRate2017.root";
+
+double isoCutEl=999999.;
+//double isoCutEl=0.35;
+double isoCutMu=0.35;
 
 void getEstimateFR( TTree* tree, 
                     TH1D* &h1D_FRel_EB,   TH1D* &h1D_FRel_EE,   TH1D* &h1D_FRmu_EB,   TH1D* &h1D_FRmu_EE,
@@ -94,7 +102,7 @@ int estimateFR(){
     h1D_FRmu_EE->Divide(h1D_FRmu_EE_d);
 
     TString fOption = "RECREATE";
-    TFile* fTemplateTree = new TFile("fakeRate.root", fOption);
+    TFile* fTemplateTree = new TFile(outputPath, fOption);
     fTemplateTree->cd();
     
     h1D_FRel_EB->SetName("h1D_FRel_EB"); h1D_FRel_EB->Write();
@@ -192,11 +200,11 @@ void getEstimateFR( TTree* tree,
         lepTmp2.SetPtEtaPhiM(lepFSR_pt->at(2),lepFSR_eta->at(2),lepFSR_phi->at(2),lepFSR_mass->at(2));
         int idTmp0=lep_id->at(0); int idTmp1=lep_id->at(1); int idTmp2=lep_id->at(2);
         double massZ1_01=0; double massZ1_12=0; double massZ1_02=0;
-        if (lep_tightId->at(0) && lep_RelIsoNoFSR->at(0)<0.35 && lep_tightId->at(1) && lep_RelIsoNoFSR->at(1)<0.35 && (idTmp0+idTmp1)==0)
+        if (lep_tightId->at(0) && ((lep_RelIsoNoFSR->at(0)<isoCutEl && abs(lep_id->at(0))==11) || (lep_RelIsoNoFSR->at(0)<isoCutMu && abs(lep_id->at(0))==13)) && lep_tightId->at(1) && ((lep_RelIsoNoFSR->at(1)<isoCutEl && abs(lep_id->at(1))==11) || (lep_RelIsoNoFSR->at(1)<isoCutMu && abs(lep_id->at(1))==13)) && (idTmp0+idTmp1)==0)
             massZ1_01=(lepTmp0+lepTmp1).M();
-        if (lep_tightId->at(0) && lep_RelIsoNoFSR->at(0)<0.35 && lep_tightId->at(2) && lep_RelIsoNoFSR->at(2)<0.35 && (idTmp0+idTmp2)==0)
+        if (lep_tightId->at(0) && ((lep_RelIsoNoFSR->at(0)<isoCutEl && abs(lep_id->at(0))==11) || (lep_RelIsoNoFSR->at(0)<isoCutMu && abs(lep_id->at(0))==13)) && lep_tightId->at(2) && ((lep_RelIsoNoFSR->at(2)<isoCutEl && abs(lep_id->at(2))==11) || (lep_RelIsoNoFSR->at(2)<isoCutMu && abs(lep_id->at(2))==13)) && (idTmp0+idTmp2)==0)
             massZ1_02=(lepTmp0+lepTmp2).M();
-        if (lep_tightId->at(1) && lep_RelIsoNoFSR->at(1)<0.35 && lep_tightId->at(2) && lep_RelIsoNoFSR->at(2)<0.35 && (idTmp1+idTmp2)==0)
+        if (lep_tightId->at(1) && ((lep_RelIsoNoFSR->at(1)<isoCutEl && abs(lep_id->at(1))==11) || (lep_RelIsoNoFSR->at(1)<isoCutMu && abs(lep_id->at(1))==13)) && lep_tightId->at(2) && ((lep_RelIsoNoFSR->at(2)<isoCutEl && abs(lep_id->at(2))==11) || (lep_RelIsoNoFSR->at(2)<isoCutMu && abs(lep_id->at(2))==13)) && (idTmp1+idTmp2)==0)
             massZ1_12=(lepTmp1+lepTmp2).M();
 
         if ((abs(pdg_massZ1-massZ1_01) < TMath::Min(abs(pdg_massZ1-massZ1_02), abs(pdg_massZ1-massZ1_12)))){
@@ -228,25 +236,25 @@ void getEstimateFR( TTree* tree,
         // fill 1D hists
         if ((abs(idL3) == 11) && (fabs(etaL3) < 1.497)) {
             h1D_FRel_EB_d->Fill(pTL3, weight);
-            if (lep_tight && (lep_iso<0.35)) {
+            if (lep_tight && (lep_iso<isoCutEl)) {
                 h1D_FRel_EB->Fill(pTL3, weight);
             }
         }
         if ((abs(idL3) == 11) && (fabs(etaL3) > 1.497)) {
             h1D_FRel_EE_d->Fill(pTL3, weight);
-            if (lep_tight && (lep_iso<0.35)) {
+            if (lep_tight && (lep_iso<isoCutEl)) {
                 h1D_FRel_EE->Fill(pTL3, weight);
             }
         }
         if ((abs(idL3) == 13) && (fabs(etaL3) < 1.2)) {
             h1D_FRmu_EB_d->Fill(pTL3, weight);
-            if (lep_tight && (lep_iso<0.35)) {
+            if (lep_tight && (lep_iso<isoCutMu)) {
                 h1D_FRmu_EB->Fill(pTL3, weight);
             }
         }
         if ((abs(idL3) == 13) && (fabs(etaL3) > 1.2)) {
             h1D_FRmu_EE_d->Fill(pTL3, weight);
-            if (lep_tight && (lep_iso<0.35)) {
+            if (lep_tight && (lep_iso<isoCutMu)) {
                 h1D_FRmu_EE->Fill(pTL3, weight);
             }
         }
