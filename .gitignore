@@ -8,3 +8,6 @@ ffwarn.dat
 input.DAT
 process.DAT
 Pdfdata/
+*.d
+*ACLiC*
+*.so
