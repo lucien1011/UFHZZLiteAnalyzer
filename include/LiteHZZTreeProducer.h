@@ -23,6 +23,8 @@ class LiteHZZTreeProducer : public Analyzer
                 double mZ2LowCut_in,
                 double mZ1HighCut_in,
                 double mZ1LowCut_in,
+                double isoCutEl_in,
+                double isoCutMu_in,
                 TString outputDir_in,
                 TString outFileName_in
                 );
@@ -96,6 +98,8 @@ LiteHZZTreeProducer::LiteHZZTreeProducer(
                 double mZ2LowCut_in,
                 double mZ1HighCut_in,
                 double mZ1LowCut_in,
+                double isoCutEl_in,
+                double isoCutMu_in,
                 TString outputDir_in,
                 TString outFileName_in
                 ){
@@ -105,6 +109,8 @@ LiteHZZTreeProducer::LiteHZZTreeProducer(
     mZ2LowCut   = mZ2LowCut_in;
     mZ1HighCut  = mZ1HighCut_in;
     mZ1LowCut   = mZ1LowCut_in;
+    isoCutEl    = isoCutEl_in;
+    isoCutMu    = isoCutMu_in;
     outputDir   = outputDir_in;
     outFileName = outFileName_in;
 }
