@@ -11,3 +11,4 @@ Pdfdata/
 *.d
 *ACLiC*
 *.so
+*.pyc
