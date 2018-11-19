@@ -26,7 +26,8 @@ class LiteHZZTreeProducer : public Analyzer
                 double isoCutEl_in,
                 double isoCutMu_in,
                 TString outputDir_in,
-                TString outFileName_in
+                TString outFileName_in,
+                bool do_wrong_fc_in=false
                 );
          LiteHZZTreeProducer(
                 TString outputDir_in,
@@ -55,6 +56,7 @@ class LiteHZZTreeProducer : public Analyzer
         TString treeName = "Ana/passedEvents";
         TString outTreeName = "passedEvents";
         bool debug = false;
+        bool do_wrong_fc = false;
 
         TString outFileName;
         TFile* outFile=0;
@@ -101,7 +103,8 @@ LiteHZZTreeProducer::LiteHZZTreeProducer(
                 double isoCutEl_in,
                 double isoCutMu_in,
                 TString outputDir_in,
-                TString outFileName_in
+                TString outFileName_in,
+                bool do_wrong_fc_in
                 ){
     m4lHighCut  = m4lHighCut_in;
     m4lLowCut   = m4lLowCut_in;
@@ -113,6 +116,7 @@ LiteHZZTreeProducer::LiteHZZTreeProducer(
     isoCutMu    = isoCutMu_in;
     outputDir   = outputDir_in;
     outFileName = outFileName_in;
+    do_wrong_fc = do_wrong_fc_in;
 }
 
 LiteHZZTreeProducer::LiteHZZTreeProducer(
@@ -140,18 +144,33 @@ int LiteHZZTreeProducer::process(){
     for(unsigned int i =0; i<Nlep; i++) {
         if((*lep_id)[i]==-11) Nem = Nem+1;
         if((*lep_id)[i]==11) Nep = Nep+1;
-    } 
+    }
+
+    if(Nmm>=2 && Nmp>=2) properLep_ID = true; //4mu
+    if(Nem>=2 && Nep>=2) properLep_ID = true; //4e
+    if(Nmm>0 && Nmp>0 && Nem>0 && Nep>0) properLep_ID = true; //2e2mu 
+
+    if (!do_wrong_fc && !properLep_ID) {
+        return -1;
+    } else if (do_wrong_fc && properLep_ID) {
+        return -1;
+    };
 
     int n_Zs=0;
     vector<int> Z_lepindex1;
     vector<int> Z_lepindex2;
     vector<float> Z_pt, Z_eta, Z_phi, Z_mass;
     lep_Hindex_stdvec->clear();
-    
+   
+    int properZCand=0; 
     for(unsigned int i=0; i<Nlep; i++){
         for(unsigned int j=i+1; j<Nlep; j++){
             // same flavor opposite charge
-            if(((*lep_id)[i]+(*lep_id)[j])!=0) continue;
+            if (!do_wrong_fc && !properLep_ID) {
+                if(((*lep_id)[i]+(*lep_id)[j])!=0) continue;
+            } else if (do_wrong_fc && properLep_ID) {
+                if(((*lep_id)[i]+(*lep_id)[j])==0) properZCand++;
+            };
 
             TLorentzVector li, lj;
             li.SetPtEtaPhiM((*lep_pt)[i],(*lep_eta)[i],(*lep_phi)[i],(*lep_mass)[i]);
@@ -187,6 +206,8 @@ int LiteHZZTreeProducer::process(){
             
         } // lep i
     } // lep j
+
+    if (do_wrong_fc && properZCand==0) return -1;
 
     // Consider all ZZ candidates
     TLorentzVector Z1Vec, Z2Vec, HVec;
