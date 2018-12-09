@@ -39,6 +39,7 @@ class LiteHZZTreeProducer : public Analyzer
         void end();
         void initTree();
         bool passSelection();
+        void setDebugMode(bool debug_in);
 
         double m4lHighCut = 9999999.;
         double m4lLowCut = 70.0;
@@ -78,6 +79,10 @@ bool LiteHZZTreeProducer::passSelection(){
 
 void LiteHZZTreeProducer::initTree(){
     setHZZTree(tree);
+}
+
+void LiteHZZTreeProducer::setDebugMode(bool debug_in){
+    debug = debug_in;
 }
 
 void LiteHZZTreeProducer::setup(){
