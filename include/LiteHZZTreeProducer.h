@@ -145,11 +145,11 @@ int LiteHZZTreeProducer::process(){
     for(unsigned int i =0; i<Nlep; i++) {
         if((*lep_id)[i]==-13) Nmm = Nmm+1;
         if((*lep_id)[i]==13) Nmp = Nmp+1;
-    }
+    };
     for(unsigned int i =0; i<Nlep; i++) {
         if((*lep_id)[i]==-11) Nem = Nem+1;
         if((*lep_id)[i]==11) Nep = Nep+1;
-    }
+    };
 
     if(Nmm>=2 && Nmp>=2) properLep_ID = true; //4mu
     if(Nem>=2 && Nep>=2) properLep_ID = true; //4e
@@ -157,7 +157,8 @@ int LiteHZZTreeProducer::process(){
 
     if (!do_wrong_fc && !properLep_ID) {
         return -1;
-    } else if (do_wrong_fc && properLep_ID) {
+    };
+    if (do_wrong_fc && properLep_ID) {
         return -1;
     };
 
@@ -171,11 +172,8 @@ int LiteHZZTreeProducer::process(){
     for(unsigned int i=0; i<Nlep; i++){
         for(unsigned int j=i+1; j<Nlep; j++){
             // same flavor opposite charge
-            if (!do_wrong_fc && !properLep_ID) {
-                if(((*lep_id)[i]+(*lep_id)[j])!=0) continue;
-            } else if (do_wrong_fc && properLep_ID) {
-                if(((*lep_id)[i]+(*lep_id)[j])==0) properZCand++;
-            };
+            if (!do_wrong_fc && ((*lep_id)[i]+(*lep_id)[j])!=0) continue;
+            if (do_wrong_fc && ((*lep_id)[i]+(*lep_id)[j])==0) properZCand++;
 
             TLorentzVector li, lj;
             li.SetPtEtaPhiM((*lep_pt)[i],(*lep_eta)[i],(*lep_phi)[i],(*lep_mass)[i]);
@@ -212,6 +210,7 @@ int LiteHZZTreeProducer::process(){
         } // lep i
     } // lep j
 
+    if (debug) cout << "ProperZCand: " << properZCand << endl;
     if (do_wrong_fc && properZCand==0) return -1;
 
     // Consider all ZZ candidates
