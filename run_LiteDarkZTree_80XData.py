@@ -1,7 +1,7 @@
 import ROOT,os
 from PyUtils.UFTier2 import t2_prefix
 from PyUtils.Shell import makedirs
-from Emailer.Utils import sendQuickMail
+from Emailer.Utils import sendQuickMail,getTimeStamp
 
 # ____________________________________________________________________________________________________________________________________ ||
 inputDir        = t2_prefix+'/store/user/t2/users/klo/Higgs/HZZ4l/NTuple/Run2/Data_80XM17_FebCombined/'
@@ -21,11 +21,11 @@ for fileName in fileNames:
     ana.loop(inputDir+fileName,inputTreeName)
 sendQuickMail(
             ["klo@cern.ch",],
-            "UFHZZLiteAnalyzer finished processing ("+emailer.getTimeStr()+") ",
+            "UFHZZLiteAnalyzer finished processing ("+getTimeStamp()+") ",
             "\n".join([
-                "Input directory: "+baseInputDir,
+                "Input directory: "+inputDir,
                 "Output directory: "+outputDir,
-                "File: "+",".join(fileNames),
+                "File: "+", ".join(fileNames),
                 ]
                 ),
             )
