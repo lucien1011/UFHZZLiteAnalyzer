@@ -99,7 +99,7 @@ void Analyzer::loop(TString filePath, TString treeName){
     for(int iEvt=0; iEvt < nentries; iEvt++){
         tree->GetEntry(iEvt);
 
-        printProgress(iEvt);
+        printProgress(iEvt+1);
 
         if (!passSelection()) continue;
         
