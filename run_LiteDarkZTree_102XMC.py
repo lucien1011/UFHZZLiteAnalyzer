@@ -5,7 +5,8 @@ from PyUtils.Shell import makedirs
 # ____________________________________________________________________________________________________________________________________ ||
 inputDir        = t2_prefix+'/store/user/t2/users/rosedj1/Higgs/HZZ4l/NTuple/Run2/MC2018_M19_Mar12_4l_2018Jets_JER_bestCandLegacy/'
 inputTreeName   = "Ana/passedEvents"
-outputDir       = "/raid/raid7/lucien/Higgs/DarkZ-NTuple/20190402/SkimTree_DarkPhoton_Run2018Data_m4l70/"
+#outputDir       = "/raid/raid7/lucien/Higgs/DarkZ-NTuple/20190402/SkimTree_DarkPhoton_Run2018Data_m4l70/"
+outputDir       = "/raid/raid7/lucien/Higgs/DarkZ-NTuple/20191120/SkimTree_DarkPhoton_Run2018Data_m4l70/"
 
 fileNames = [
                 'ZZTo4L_TuneCP5_13TeV_powheg_pythia8.root',

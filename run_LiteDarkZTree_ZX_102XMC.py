@@ -3,18 +3,12 @@ from PyUtils.UFTier2 import t2_prefix
 from PyUtils.Shell import makedirs
 
 # ____________________________________________________________________________________________________________________________________ ||
-inputDir        = t2_prefix+'/store/user/t2/users/klo/Higgs/DarkZ/NTuples/BkgMC_Run2017/'
+inputDir        = t2_prefix+'/store/user/t2/users/rosedj1/Higgs/HZZ4l/NTuple/Run2/MC2018_M19_Mar5_3l_2018Jets_bestCandLegacy/'
 inputTreeName   = "Ana/passedEvents"
-outputDir       = "/raid/raid7/lucien/Higgs/Zprime-NTuple/20190605/SkimTree_Zprime_Run2017Data_m4l70/"
+outputDir       = "/raid/raid7/lucien/Higgs/DarkZ-NTuple/20190402/SkimTree_DarkPhoton_Run2018Data_m4l70/"
 
 fileNames = [
-    'ZZTo4L_13TeV_powheg_pythia8_RunIIFall17MiniAOD-94X_mc2017_realistic_v10_ext1-v1.root',
-    'GluGluToContinToZZTo2e2mu_13TeV_MCFM701_pythia8.root',
-    'GluGluToContinToZZTo2mu2tau_13TeV_MCFM701_pythia8.root',
-    'GluGluToContinToZZTo4mu_13TeV_MCFM701_pythia8.root',
-    'GluGluToContinToZZTo2e2tau_13TeV_MCFM701_pythia8.root',
-    'GluGluToContinToZZTo4e_13TeV_MCFM701_pythia8.root',
-    'GluGluToContinToZZTo4tau_13TeV_MCFM701_pythia8.root',
+    'WZTo3LNu_TuneCP5_13TeV-amcatnloFXFX-pythia8.root',
     ]
 
 # ____________________________________________________________________________________________________________________________________ ||
@@ -28,12 +22,10 @@ for fileName in fileNames:
             120.,
             4.,
             120.,
-            12.,
+            40.,
             999999.,
             0.35,
             outputDir,
             fileName,
-            False,
-            False,
             )
     ana.loop(inputDir+fileName,inputTreeName)

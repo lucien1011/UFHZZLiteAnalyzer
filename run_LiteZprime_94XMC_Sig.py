@@ -5,7 +5,7 @@ from PyUtils.Shell import makedirs
 # ____________________________________________________________________________________________________________________________________ ||
 inputDir        = t2_prefix+'/store/user/muahmad/rootfiles_2017/'
 inputTreeName   = "Ana/passedEvents"
-outputDir       = "/raid/raid7/lucien/Higgs/Zprime-NTuple/20190510/SkimTree_Zprime_Run2017Data_m4l70/"
+outputDir       = "/raid/raid7/lucien/Higgs/Zprime-NTuple/20190605/SkimTree_Zprime_Run2017Data_m4l70/"
 
 fileNames = [
     "ZpTomumu_M10_13TeV_MadGraph5_pythia8-v4_muahmad-RunIISummer16MiniAODv2.root",  
@@ -37,5 +37,7 @@ for fileName in fileNames:
             0.35,
             outputDir,
             fileName,
+            False,
+            False,
             )
     ana.loop(inputDir+fileName,inputTreeName)

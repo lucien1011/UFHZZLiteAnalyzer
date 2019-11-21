@@ -27,7 +27,8 @@ class LiteHZZTreeProducer : public Analyzer
                 double isoCutMu_in,
                 TString outputDir_in,
                 TString outFileName_in,
-                bool do_wrong_fc_in=false
+                bool do_wrong_fc_in=false,
+                bool do_smartcut_in=true
                 );
          LiteHZZTreeProducer(
                 TString outputDir_in,
@@ -58,6 +59,7 @@ class LiteHZZTreeProducer : public Analyzer
         TString outTreeName = "passedEvents";
         bool debug = false;
         bool do_wrong_fc = false;
+        bool do_smartcut = true;
 
         TString outFileName;
         TFile* outFile=0;
@@ -109,7 +111,8 @@ LiteHZZTreeProducer::LiteHZZTreeProducer(
                 double isoCutMu_in,
                 TString outputDir_in,
                 TString outFileName_in,
-                bool do_wrong_fc_in
+                bool do_wrong_fc_in,
+                bool do_smartcut_in
                 ){
     m4lHighCut  = m4lHighCut_in;
     m4lLowCut   = m4lLowCut_in;
@@ -122,6 +125,7 @@ LiteHZZTreeProducer::LiteHZZTreeProducer(
     outputDir   = outputDir_in;
     outFileName = outFileName_in;
     do_wrong_fc = do_wrong_fc_in;
+    do_smartcut = do_smartcut_in;
 }
 
 LiteHZZTreeProducer::LiteHZZTreeProducer(
@@ -361,7 +365,7 @@ int LiteHZZTreeProducer::process(){
                 
             }
             
-            if (!passSmartCut) continue; //Fix me 
+            if (do_smartcut && !passSmartCut) continue; 
             if (debug) cout<<" massZ1: "<<Z1.M()<<" massZ2: "<<Z2.M()<<endl;
             if (Z1.M() < mZ1LowCut) continue;
             if (Z1.M() > mZ1HighCut) continue;

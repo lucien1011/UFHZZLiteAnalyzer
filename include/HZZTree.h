@@ -252,6 +252,14 @@ void initNewLiteTree(TTree* newtree){
     newtree->Branch("lep_RelIso",&lep_RelIso);
     newtree->Branch("lep_RelIsoNoFSR",&lep_RelIsoNoFSR);
     newtree->Branch("lep_Hindex",&lep_Hindex_stdvec);
+    newtree->Branch("lep_Sip",&lep_Sip);
+    newtree->Branch("lep_ecalDriven",&lep_ecalDriven);
+    newtree->Branch("lep_dataMC",&lep_dataMC); 
+    newtree->Branch("lep_pterr",&lep_pterr); 
+    newtree->Branch("lepFSR_pt",&lepFSR_pt);
+    newtree->Branch("lepFSR_eta",&lepFSR_eta);
+    newtree->Branch("lepFSR_phi",&lepFSR_phi);
+    newtree->Branch("lepFSR_mass",&lepFSR_mass); 
 
     newtree->Branch("pTL1",&pTL1,"pTL1/F");
     newtree->Branch("pTL2",&pTL2,"pTL2/F");
