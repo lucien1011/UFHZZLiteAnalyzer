@@ -5,9 +5,9 @@
 #pragma link C++ nestedclasses;
 
 #pragma extra_include "Analyzer.h";
-#pragma extra_include "Wto3l_mem_controlregion.h";
+#pragma extra_include "LiteWto3lMMMTreeProducer.h";
 
 #pragma link C++ class Analyzer;
-#pragma link C++ class Wto3l_mem_controlregion;
+#pragma link C++ class LiteWto3lMMMTreeProducer;
 
 #endif

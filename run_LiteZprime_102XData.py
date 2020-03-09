@@ -1,15 +1,18 @@
 import ROOT,os
 from PyUtils.UFTier2 import t2_prefix
 from PyUtils.Shell import makedirs
-from Emailer.Utils import sendQuickMail,getTimeStamp
 
 # ____________________________________________________________________________________________________________________________________ ||
-inputDir        = t2_prefix+'/store/user/t2/users/klo/Higgs/HZZ4l/NTuple/Run2/Data_80XM17_FebCombined/'
+inputDir        = t2_prefix+'/store/user/t2/users/klo/Higgs/HZZ4l/NTuple/Run2/Data2018_102X_M19_3l_2018jets/'
 inputTreeName   = "passedEvents"
-outputDir       = "/raid/raid7/lucien/Higgs/DarkZ-NTuple/20190307/SkimTree_DarkPhoton_WrongFC_Run2016Data_m4l70/"
+#outputDir       = "/raid/raid7/lucien/Higgs/DarkZ-NTuple/20190402/SkimTree_DarkPhoton_Run2018Data_m4l70/"
+outputDir       = "/raid/raid7/kshi/Zprime/20200212_Zto4l/SkimTree_Run2018_MMM_Data/"
 
 fileNames = [
-    "Data_Run2016-03Feb2017_4l.root",
+    'Data_Run2018A-17Sep2018_noDuplicates.root',
+    'Data_Run2018B-17Sep2018_noDuplicates.root',
+    'Data_Run2018C-17Sep2018_noDuplicates.root',
+    'Data_Run2018D-PromptReco-v2_noDuplicates.root',
     ]
 
 # ____________________________________________________________________________________________________________________________________ ||
@@ -24,21 +27,9 @@ for fileName in fileNames:
             4.,
             120.,
             40.,
-            0.35,
+            999999.,
             0.35,
             outputDir,
             fileName,
-            True,
             )
-    ana.setDebugMode(False)
     ana.loop(inputDir+fileName,inputTreeName)
-sendQuickMail(
-            ["klo@cern.ch",],
-            "UFHZZLiteAnalyzer finished processing ("+getTimeStamp()+") ",
-            "\n".join([
-                "Input directory: "+inputDir,
-                "Output directory: "+outputDir,
-                "File: "+", ".join(fileNames),
-                ]
-                ),
-            )

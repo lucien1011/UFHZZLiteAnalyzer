@@ -8,7 +8,8 @@ bkgTreeDirT2_Feb21      = t2_prefix+"/store/user/t2/users/klo/Higgs/HZZ4l/NTuple
 bkgTreeDirT2_Aug10      = t2_prefix+"/store/user/t2/users/klo/Higgs/HZZ4l/NTuple/Run2/MC80X_M17_2lskim_Aug10/"
 sigTreeDirT2            = t2_prefix+"/store/user/t2/users/mhl/rootfiles_2017/"
 inputTreeName           = "Ana/passedEvents"
-outputDir               = "/raid/raid7/kshi/Zprime/20190724/SkimTree_Run2016_signalregion_MC/"
+#outputDir               = "/raid/raid7/kshi/Zprime/20190729/SkimTree_Run2016_mem_controlregion_MC/"
+outputDir               = "/raid/raid7/kshi/Zprime/20190827/SkimTree_Run2016_MEM_MC/" 
 
 fileNames = [
         bkgTreeDirT2_Feb21+"DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8.root",
@@ -22,17 +23,11 @@ fileNames = [
         ]
 
 # ____________________________________________________________________________________________________________________________________ ||
-ROOT.gSystem.Load("include/Wto3l_signalregion_h.so")
+ROOT.gSystem.Load("include/LiteWto3lMEMTreeProducer_h.so")
 
 makedirs(outputDir)
 for fileName in fileNames:
-    ana = ROOT.Wto3l_signalregion(
-            9999999.,
-            70.,
-            120.,
-            4.,
-            120.,
-            40.,
+    ana = ROOT.LiteWto3lMEMTreeProducer(
             0.35,
             0.35,
             outputDir,

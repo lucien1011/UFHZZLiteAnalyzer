@@ -10,8 +10,8 @@ void removeDuplicates(TString filename, TString outfilename) {
 
     //TFile *oldfile = new TFile(filename);
     TFile *oldfile = TFile::Open(filename);
-    TTree *oldtree = (TTree*)oldfile->Get("Ana/passedEvents");
-    //TTree *oldtree = (TTree*)oldfile->Get("passedEvents");
+    //TTree *oldtree = (TTree*)oldfile->Get("Ana/passedEvents");
+    TTree *oldtree = (TTree*)oldfile->Get("passedEvents");
 
     Long64_t nentries = oldtree->GetEntries();
     std::cout<<nentries<<" total entries."<<std::endl;

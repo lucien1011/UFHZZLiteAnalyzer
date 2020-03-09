@@ -7,7 +7,7 @@ from Emailer.Utils import sendQuickMail,getTimeStamp
 bkgTreeDirT2_Feb21      = t2_prefix+"/store/user/t2/users/klo/Higgs/HZZ4l/NTuple/Run2/MC80X_M17_2l_Feb21/"
 bkgTreeDirT2_Aug10      = t2_prefix+"/store/user/t2/users/klo/Higgs/HZZ4l/NTuple/Run2/MC80X_M17_2lskim_Aug10/"
 inputTreeName           = "Ana/passedEvents"
-outputDir               = "/raid/raid7/kshi/Zprime/20190718/SkimTree_Run2016_MC/"
+outputDir               = "/raid/raid7/lucien/Higgs/DarkZ-NTuple/20181116/SkimTree_DarkPhoton_ZX_Run2016Data_m4l70/"
 
 fileNames = [
         bkgTreeDirT2_Feb21+"DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8.root",
@@ -17,11 +17,11 @@ fileNames = [
         ]
 
 # ____________________________________________________________________________________________________________________________________ ||
-ROOT.gSystem.Load("include/LiteHZZTreeProducer_fakerate_h.so")
+ROOT.gSystem.Load("include/LiteHZZTreeProducer_h.so")
 
 makedirs(outputDir)
 for fileName in fileNames:
-    ana = ROOT.LiteHZZTreeProducer_fakerate(
+    ana = ROOT.LiteHZZTreeProducer(
             9999999.,
             70.,
             120.,
@@ -37,7 +37,7 @@ for fileName in fileNames:
     ana.setDebugMode(False)
     ana.loop(fileName,inputTreeName)
 sendQuickMail(
-            ["kshi@cern.ch",],
+            ["klo@cern.ch",],
             "UFHZZLiteAnalyzer finished processing ("+getTimeStamp()+") ",
             "\n".join([
                 "Input directory: "+", ".join([bkgTreeDirT2_Feb21,bkgTreeDirT2_Aug10,]),

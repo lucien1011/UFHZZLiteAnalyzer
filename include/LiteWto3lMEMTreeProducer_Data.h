@@ -1,7 +1,7 @@
-#ifndef Wto3l_mem_controlregion_h
-#define Wto3l_mem_controlregion_h
+#ifndef LiteWto3lMEMTreeProducer_Data_h 
+#define LiteWto3lMEMTreeProducer_Data_h
 
-#include "Wto3l_mem_controlregion_Linkdef.h"
+#include "LiteWto3lMEMTreeProducer_Data_Linkdef.h"
 #include "Analyzer.h"
 #include "HZZTree_fakerate.h"
 #include "deltaR.h"
@@ -9,28 +9,22 @@
 
 using namespace std;  
 
-class Wto3l_mem_controlregion : public Analyzer 
+class LiteWto3lMEMTreeProducer_Data : public Analyzer 
 {
     public:
         // static const double Zmass = 91.1876;
         const double Zmass = 91.1876;
 
-        Wto3l_mem_controlregion();
-        ~Wto3l_mem_controlregion();
-        Wto3l_mem_controlregion(
-                double m4lHighCut_in,
-                double m4lLowCut_in,
-                double mZ2HighCut_in,
-                double mZ2LowCut_in,
-                double mZ1HighCut_in,
-                double mZ1LowCut_in,
+        LiteWto3lMEMTreeProducer_Data();
+        ~LiteWto3lMEMTreeProducer_Data();
+        LiteWto3lMEMTreeProducer_Data(
                 double isoCutEl_in,
                 double isoCutMu_in,
                 TString outputDir_in,
                 TString outFileName_in,
                 bool do_wrong_fc_in=false
                 );
-         Wto3l_mem_controlregion(
+         LiteWto3lMEMTreeProducer_Data(
                 TString outputDir_in,
                 TString outFileName_in
                 );
@@ -43,18 +37,11 @@ class Wto3l_mem_controlregion : public Analyzer
         void setDebugMode(bool debug_in);
         void sortedArray(double x, double y, double z, double sortarray[3]);
 
-        double m4lHighCut = 9999999.;
-        double m4lLowCut = 70.0;
-        double mZ2HighCut=120.0;
-        //double mZ2High=999999.;
-        double mZ2LowCut=4.0;
-        double mZ1HighCut=120.0;
-        double mZ1LowCut=40.0;
-        //double isoCutEl=999999.;
         double isoCutEl=0.35;
         double isoCutMu=0.35;
         double leadingPtCut=20.0; 
         double subleadingPtCut=10.0; 
+        double lowestPtCut=5.0;
 
         TString treeName = "Ana/passedEvents";
         TString outTreeName = "passedEvents";
@@ -66,59 +53,47 @@ class Wto3l_mem_controlregion : public Analyzer
         TTree* outTree=0;
 };
 
-Wto3l_mem_controlregion::Wto3l_mem_controlregion(){
+LiteWto3lMEMTreeProducer_Data::LiteWto3lMEMTreeProducer_Data(){
 
 }
 
-Wto3l_mem_controlregion::~Wto3l_mem_controlregion(){
+LiteWto3lMEMTreeProducer_Data::~LiteWto3lMEMTreeProducer_Data(){
 
 }
 
-bool Wto3l_mem_controlregion::passSelection(){
+bool LiteWto3lMEMTreeProducer_Data::passSelection(){
     return true;
 }
 
 
-void Wto3l_mem_controlregion::initTree(){
+void LiteWto3lMEMTreeProducer_Data::initTree(){
     setHZZTree(tree);
 }
 
-void Wto3l_mem_controlregion::setDebugMode(bool debug_in){
+void LiteWto3lMEMTreeProducer_Data::setDebugMode(bool debug_in){
     debug = debug_in;
 }
 
-void Wto3l_mem_controlregion::setup(){
+void LiteWto3lMEMTreeProducer_Data::setup(){
     outFile = TFile::Open(outputDir+outFileName,fOptionWrite);
     outTree = new TTree(outTreeName,outTreeName);
 
     initNewLiteTree_fakerate(outTree);
 }
 
-void Wto3l_mem_controlregion::end(){
+void LiteWto3lMEMTreeProducer_Data::end(){
     outFile->cd();
     outTree->Write(outTreeName,TObject::kOverwrite);
     outFile->Close(); 
 }
 
-Wto3l_mem_controlregion::Wto3l_mem_controlregion(
-                double m4lHighCut_in,
-                double m4lLowCut_in,
-                double mZ2HighCut_in,
-                double mZ2LowCut_in,
-                double mZ1HighCut_in,
-                double mZ1LowCut_in,
+LiteWto3lMEMTreeProducer_Data::LiteWto3lMEMTreeProducer_Data(
                 double isoCutEl_in,
                 double isoCutMu_in,
                 TString outputDir_in,
                 TString outFileName_in,
                 bool do_wrong_fc_in
                 ){
-    m4lHighCut  = m4lHighCut_in;
-    m4lLowCut   = m4lLowCut_in;
-    mZ2HighCut  = mZ2HighCut_in;
-    mZ2LowCut   = mZ2LowCut_in;
-    mZ1HighCut  = mZ1HighCut_in;
-    mZ1LowCut   = mZ1LowCut_in;
     isoCutEl    = isoCutEl_in;
     isoCutMu    = isoCutMu_in;
     outputDir   = outputDir_in;
@@ -126,7 +101,7 @@ Wto3l_mem_controlregion::Wto3l_mem_controlregion(
     do_wrong_fc = do_wrong_fc_in;
 }
 
-Wto3l_mem_controlregion::Wto3l_mem_controlregion(
+LiteWto3lMEMTreeProducer_Data::LiteWto3lMEMTreeProducer_Data(
                 TString outputDir_in,
                 TString outFileName_in
                 ){
@@ -134,7 +109,7 @@ Wto3l_mem_controlregion::Wto3l_mem_controlregion(
     outFileName = outFileName_in;
 }
 
-void Wto3l_mem_controlregion::sortedArray(double x, double y, double z, double sortarray[3])
+void LiteWto3lMEMTreeProducer_Data::sortedArray(double x, double y, double z, double sortarray[3])
 {
     double max_v = max(x,max(y,z));
     double min_v = min(x,min(y,z));
@@ -149,7 +124,7 @@ void Wto3l_mem_controlregion::sortedArray(double x, double y, double z, double s
     //return sortarray;
 }
 
-int Wto3l_mem_controlregion::process(){
+int LiteWto3lMEMTreeProducer_Data::process(){
 
     int Nlep = (*lep_id).size();
     int nTightLep = 0;
@@ -162,7 +137,7 @@ int Wto3l_mem_controlregion::process(){
     if(passedTrig == 0) return -1; 
 
     for (int iLep = 0; iLep < Nlep; iLep++) {
-        if ((*lep_tightId)[iLep] == 1 && (*lep_RelIso)[iLep] < 0.35 && nTightLep < 2){
+        if ((*lep_tightId)[iLep] == 1 && (*lep_RelIso)[iLep] < isoCutMu && nTightLep < 2){
             nTightLep++;
             tightIsoLepIndex.push_back(iLep);
         }
@@ -179,15 +154,17 @@ int Wto3l_mem_controlregion::process(){
     int index3 = looseIsoLepIndex[0];
 
     //if ( (*lep_id)[index1] + (*lep_id)[index2] != 0 ) return -1;
-    if ( ((*lep_id)[index1] > 0 && (*lep_id)[index2] > 0) || ((*lep_id)[index1] < 0 && (*lep_id)[index2] < 0) ) return -1;
+    //if ( ((*lep_id)[index1] > 0 && (*lep_id)[index2] > 0) || ((*lep_id)[index1] < 0 && (*lep_id)[index2] < 0) ) return -1;
+    if ((*lep_id)[index1] > 0 && (*lep_id)[index2] > 0 && (*lep_id)[index3] > 0) return -1;
+    if ((*lep_id)[index1] < 0 && (*lep_id)[index2] < 0 && (*lep_id)[index3] < 0) return -1;
 
-    if ((*lep_Sip)[index1] > 3 || (*lep_Sip)[index2] > 3 || (*lep_Sip)[index3] > 3) return -1;
+    //if ((*lep_Sip)[index1] > 3 || (*lep_Sip)[index2] > 3 || (*lep_Sip)[index3] > 3) return -1;
 
     double pTs[3]; sortedArray((*lep_pt)[index1], (*lep_pt)[index2], (*lep_pt)[index3], pTs);
-    if (pTs[0] < 20 || pTs[1] < 10 || pTs[2] < 5) return -1;
+    if (pTs[0] < leadingPtCut || pTs[1] < subleadingPtCut || pTs[2] < lowestPtCut) return -1;
 
     double isos[3]; sortedArray((*lep_RelIso)[index1], (*lep_RelIso)[index2], (*lep_RelIso)[index3], isos);
-    double sips[3]; sortedArray((*lep_Sip)[index1], (*lep_Sip)[index2], (*lep_Sip)[index3], sips);
+    //double sips[3]; sortedArray((*lep_Sip)[index1], (*lep_Sip)[index2], (*lep_Sip)[index3], sips);
 
     int tmp = 0;
     TLorentzVector Lep1,Lep2,Lep3;
@@ -251,9 +228,7 @@ int Wto3l_mem_controlregion::process(){
     IsoL3 = (*lep_RelIso)[index3];
     massL1 = (*lep_mass)[index1]; massL1 = (*lep_mass)[index2];
     massL3 = (*lep_mass)[index3];
-    MomIdL1 = (*lep_matchedR03_MomId)[index1];  MomIdL2 = (*lep_matchedR03_MomId)[index2];  MomIdL3 = (*lep_matchedR03_MomId)[index3];
-    PDG_IdL1 = (*lep_matchedR03_PdgId)[index1];  PDG_IdL2 = (*lep_matchedR03_PdgId)[index2];  PDG_IdL3 = (*lep_matchedR03_PdgId)[index3];
-    MomMomIdL1 = (*lep_matchedR03_MomMomId)[index1];  MomMomIdL2 = (*lep_matchedR03_MomMomId)[index2];  MomMomIdL3 = (*lep_matchedR03_MomMomId)[index3];
+
     //lep_Hindex_stdvec->push_back(lep_Hindex[0]);
     //lep_Hindex_stdvec->push_back(lep_Hindex[1]);
     //lep_Hindex_stdvec->push_back(lep_Hindex[2]);
