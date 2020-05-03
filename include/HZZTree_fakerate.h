@@ -19,13 +19,13 @@ bool passTrig;
 float pTL1, etaL1, IsoL1, massL1;
 float pTL2, etaL2, IsoL2, massL2;
 float pTL3, etaL3, IsoL3, massL3;
-float pTL4, etaL4;
+float pTL4, etaL4, IsoL4, massL4;
 float phiL1, deltaphiL13;
 float phiL2, deltaphiL14;
 float phiL3, deltaphiL23;
 float phiL4, deltaphiL24;
 float deltaphiZZ;
-int idL1, idL2, idL3, idL4, MomIdL1, MomIdL2, MomIdL3, PDG_IdL1, PDG_IdL2, PDG_IdL3, MomMomIdL1, MomMomIdL2, MomMomIdL3;
+int idL1, idL2, idL3, idL4, MomIdL1, MomIdL2, MomIdL3, MomIdL4, PDG_IdL1, PDG_IdL2, PDG_IdL3, PDG_IdL4, MomMomIdL1, MomMomIdL2, MomMomIdL3, MomMomIdL4;
 
 float mass4l, mass4lErr;
 float mass3l;
@@ -54,6 +54,8 @@ float D_VBF_QG;
 float D_VBF1j_QG;
 float D_HadWH_QG;
 float D_HadZH_QG;
+
+Float_t GENmassZ2;
 
 int EventCat;
 int nisoleptons, nbjets_pt30_eta4p7;
@@ -98,6 +100,8 @@ std::vector<int> *jet_iscleanH4l; std::vector<float> *jet_QGTagger; std::vector<
 std::vector<int> *fsrPhotons_lepindex;
 std::vector<float> *fsrPhotons_pt; std::vector<float> *fsrPhotons_eta; std::vector<float> *fsrPhotons_phi;
 std::vector<float> *fsrPhotons_pterr;
+
+//std::vector<float> *GENmassZ2;
 
 void setHZZTree(TTree* tree){
     
@@ -213,6 +217,8 @@ void setHZZTree(TTree* tree){
     tree->SetBranchStatus("njets_pt30_eta2p5",1);
     tree->SetBranchStatus("nbjets_pt30_eta4p7",1);
     tree->SetBranchStatus("EventCat",1); 
+
+    tree->SetBranchStatus("GENmassZ2",1);
    
     tree->SetBranchAddress("lep_Hindex",&lep_Hindex);
     tree->SetBranchAddress("passedZ4lSelection",&passedZ4lSelection);
@@ -231,6 +237,7 @@ void setHZZTree(TTree* tree){
     tree->SetBranchAddress("nbjets_pt30_eta4p7",&nbjets_pt30_eta4p7);
     tree->SetBranchAddress("EventCat",&EventCat);
  
+    tree->SetBranchAddress("GENmassZ2",&GENmassZ2);
 }
 
 void initNewLiteTree(TTree* newtree){
@@ -315,6 +322,11 @@ void initNewLiteTree_fakerate(TTree* newtree){
     newtree->Branch("Event",&Event,"Event/l");
     newtree->Branch("LumiSect",&LumiSect,"LumiSect/l");
     newtree->Branch("nVtx",&nVtx,"nVtx/I");
+    newtree->Branch("passedTrig",&passedTrig,"passedTrig/O");
+    newtree->Branch("passedFullSelection",&passedFullSelection,"passedFullSelection/O");
+    newtree->Branch("passedZ4lSelection",&passedZ4lSelection,"passedZ4lSelection/O");
+    newtree->Branch("passedZXCRSelection",&passedZXCRSelection,"passedZXCRSelection/O");
+    newtree->Branch("passSmartCut",&passSmartCut,"passSmartCut/O");
     newtree->Branch("nZXCRFailedLeptons",&nZXCRFailedLeptons,"nZXCRFailedLeptons/I");
     newtree->Branch("finalState",&finalState,"finalState/I");    
     newtree->Branch("dataMCWeight",&dataMCWeight,"dataMCWeight/F");
@@ -362,21 +374,35 @@ void initNewLiteTree_fakerate(TTree* newtree){
     newtree->Branch("IsoL1",&IsoL1,"IsoL1/F");
     newtree->Branch("IsoL2",&IsoL2,"IsoL2/F");
     newtree->Branch("IsoL3",&IsoL3,"IsoL3/F");
+    newtree->Branch("IsoL4",&IsoL4,"IsoL4/F");
     newtree->Branch("massL1",&massL1,"massL1/F");
     newtree->Branch("massL2",&massL2,"massL2/F");
     newtree->Branch("massL3",&massL3,"massL3/F");
+    newtree->Branch("massL4",&massL4,"massL4/F");
     newtree->Branch("MomIdL1",&MomIdL1,"MomIdL1/I");
     newtree->Branch("MomIdL2",&MomIdL2,"MomIdL2/I");
     newtree->Branch("MomIdL3",&MomIdL3,"MomIdL3/I");
+    newtree->Branch("MomIdL4",&MomIdL4,"MomIdL4/I");
     newtree->Branch("PDG_IdL1",&PDG_IdL1,"PDG_IdL1/I");
     newtree->Branch("PDG_IdL2",&PDG_IdL2,"PDG_IdL2/I");
     newtree->Branch("PDG_IdL3",&PDG_IdL3,"PDG_IdL3/I");
+    newtree->Branch("PDG_IdL4",&PDG_IdL4,"PDG_IdL4/I");
     newtree->Branch("MomMomIdL1",&MomMomIdL1,"MomMomIdL1/I");
     newtree->Branch("MomMomIdL2",&MomMomIdL2,"MomMomIdL2/I");
     newtree->Branch("MomMomIdL3",&MomMomIdL3,"MomMomIdL3/I");
+    newtree->Branch("MomMomIdL4",&MomMomIdL4,"MomMomIdL4/I");
+    newtree->Branch("deltaphiL13",&deltaphiL13,"deltaphiL13/F");
+    newtree->Branch("deltaphiL14",&deltaphiL14,"deltaphiL14/F");
+    newtree->Branch("deltaphiL23",&deltaphiL23,"deltaphiL23/F");
+    newtree->Branch("deltaphiL24",&deltaphiL24,"deltaphiL24/F");
+    newtree->Branch("deltaphiZZ",&deltaphiZZ,"deltaphiZZ/F");
+    newtree->Branch("mass4l",&mass4l,"mass4l/F");
 
+    newtree->Branch("mass4mu",&mass4mu,"mass4mu/F");
+    newtree->Branch("mass4e",&mass4e,"mass4e/F");
     newtree->Branch("mass2e2mu",&mass2e2mu,"mass2e2mu/F");
     newtree->Branch("pT3l",&pT3l,"pT3l/F");
+    newtree->Branch("pT4l",&pT4l,"pT4l/F");
     newtree->Branch("massZ1",&massZ1,"massZ1/F");
     newtree->Branch("massZ2",&massZ2,"massZ2/F"); 
     newtree->Branch("met",&met,"met/F"); 

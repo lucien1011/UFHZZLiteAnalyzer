@@ -227,7 +227,7 @@ int LiteWto3lMMMTreeProducer::process(){
     tmpIDs.push_back(idL3); //tmpIDs.push_back(idL4);
     IsoL1 = (*lep_RelIso)[index1]; IsoL2 = (*lep_RelIso)[index2];
     IsoL3 = (*lep_RelIso)[index3];
-    massL1 = (*lep_mass)[index1]; massL1 = (*lep_mass)[index2];
+    massL1 = (*lep_mass)[index1]; massL2 = (*lep_mass)[index2];
     massL3 = (*lep_mass)[index3];
     MomIdL1 = (*lep_matchedR03_MomId)[index1];  MomIdL2 = (*lep_matchedR03_MomId)[index2];  MomIdL3 = (*lep_matchedR03_MomId)[index3];
     PDG_IdL1 = (*lep_matchedR03_PdgId)[index1];  PDG_IdL2 = (*lep_matchedR03_PdgId)[index2];  PDG_IdL3 = (*lep_matchedR03_PdgId)[index3];

@@ -21,4 +21,8 @@
 #root -b -q removeDuplicates.C\(\"root://cmsio5.rc.ufl.edu//store/user/t2/users/klo/Higgs/HZZ4l/NTuple/Run2/ZXData_Run2018/Data_Run2018C.root\",\"/raid/raid7/lucien/Higgs/HZZ4l/NTuple/ZPlusX/ZXCR/SkimTree_ZX_Run2018Data_190220/Data_Run2018C_UFHZZNTuple_noDuplicates.root\"\)
 #root -b -q removeDuplicates.C\(\"root://cmsio5.rc.ufl.edu//store/user/t2/users/klo/Higgs/HZZ4l/NTuple/Run2/ZXData_Run2018/Data_Run2018D.root\",\"/raid/raid7/lucien/Higgs/HZZ4l/NTuple/ZPlusX/ZXCR/SkimTree_ZX_Run2018Data_190220/Data_Run2018D_UFHZZNTuple_noDuplicates.root\"\)
 
-root -b -q removeDuplicates.C\(\"/raid/raid7/kshi/Zprime/20200212_Zto4l/promptCR/SkimTree_Run2017_MMM_Data/Data_Run2017_DoubleMuon-SingleMuon.root\",\"/raid/raid7/kshi/Zprime/20200212_Zto4l/promptCR/SkimTree_Run2017_MMM_Data/Data_Run2017_DoubleMuon-SingleMuon_noDuplicates.root\"\)
+root -b -q removeDuplicates.C\(\"/raid/raid7/kshi/Zprime/20200212_Zto4l/mllLowGev/SkimTree_Run2017_MMM_Data/Data_Run2017_DoubleMuon-SingleMuon.root\",\"/raid/raid7/kshi/Zprime/20200212_Zto4l/mllLowGev/SkimTree_Run2017_MMM_Data/Data_Run2017_DoubleMuon-SingleMuon_noDuplicates.root\"\)
+
+#root -b -q removeDuplicates.C\(\"/raid/raid7/kshi/Zprime/20200212_Zto4l/fakerate/SkimTree_Run2017_MMM_Data/Data_Run2017_DoubleMuon-SingleMuon.root\",\"/raid/raid7/kshi/Zprime/20200212_Zto4l/fakerate/SkimTree_Run2017_MMM_Data/Data_Run2017_DoubleMuon-SingleMuon_noDuplicates.root\"\)
+
+#root -b -q removeDuplicates.C\(\"/raid/raid7/kshi/Zprime/20200212_Zto4l/mllLowGev/SkimTree_Run2018_MMM_Data/Data_Run2018.root\",\"/raid/raid7/kshi/Zprime/20200212_Zto4l/mllLowGev/SkimTree_Run2018_MMM_Data/Data_Run2018_noDuplicates.root\"\)

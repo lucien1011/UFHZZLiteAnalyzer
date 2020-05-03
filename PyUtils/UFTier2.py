@@ -1,5 +1,6 @@
 import subprocess,os
 
+#t2_prefix = "root://cmsio5.rc.ufl.edu:1094/"
 t2_prefix = "root://cmsio5.rc.ufl.edu/"
 
 def isRootFile(fileName):
@@ -33,4 +34,4 @@ class FileInfo(object):
         if 'ufhpc' in os.environ['HOSTNAME']:
             return self.path
         else:
-            return t2_prefix+self.path.replace("/cms/data","")
+            return t2_prefix+self.path.replace("/cmsuf/data","")
