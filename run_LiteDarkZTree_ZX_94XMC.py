@@ -1,19 +1,22 @@
 import ROOT,os
 from PyUtils.UFTier2 import t2_prefix
 from PyUtils.Shell import makedirs
-from Emailer.Utils import sendQuickMail,getTimeStamp
+#from Emailer.Utils import sendQuickMail,getTimeStamp
 
 # ____________________________________________________________________________________________________________________________________ ||
-inputDir        = t2_prefix+'/store/user/t2/users/klo/Higgs/DarkZ/NTuples/ZPlusX_Early2017_v1/'
-inputTreeName   = "Ana/passedEvents"
-outputDir       = "/raid/raid7/lucien/Higgs/DarkZ-NTuple/20181116/SkimTree_DarkPhoton_ZX_Run2017Data_m4l70/"
+#inputDir               = t2_prefix+'/store/user/t2/users/klo/Higgs/DarkZ/NTuples/ZPlusX_Early2017_v1/'
+inputDir                = "/cmsuf/data/store/user/t2/users/klo/Zprime/EXO-18-008/94X_MCProd_200612/"
+inputTreeName           = "Ana/passedEvents"
+#outputDir              = "/raid/raid7/lucien/Higgs/DarkZ-NTuple/20181116/SkimTree_DarkPhoton_ZX_Run2017Data_m4l70/"
+outputDir               = "/cmsuf/data/store/user/t2/users/klo/UFNTupleRunner_Storage/kinho.lo/Higgs/DarkZ-NTuple/20181116/SkimTree_DarkPhoton_ZX_Run2017Data_m4l70/"
 
 fileNames = [
-    'ZZTo4L_ext1.root',
+    #'ZZTo4L_ext1.root',
     #'DYJetsToLL_M10To50.root',
     #'DYJetsToLL_M50.root',
     #'WZTo3LNu.root',
     #'TTJets.root',
+    'ZGToLLG_01J_5f_lowMLL_lowGPt_TuneCP5_13TeV-amcatnloFXFX-pythia8_Fall17.root',
     ]
 
 # ____________________________________________________________________________________________________________________________________ ||
@@ -36,13 +39,13 @@ for fileName in fileNames:
             )
     ana.setDebugMode(False)
     ana.loop(inputDir+fileName,inputTreeName)
-sendQuickMail(
-            ["klo@cern.ch",],
-            "UFHZZLiteAnalyzer finished processing ("+getTimeStamp()+") ",
-            "\n".join([
-                "Input directory: "+", ".join([inputDir,]),
-                "Output directory: "+outputDir,
-                "File: "+", ".join(fileNames),
-                ]
-                ),
-            )
+#sendQuickMail(
+#            ["klo@cern.ch",],
+#            "UFHZZLiteAnalyzer finished processing ("+getTimeStamp()+") ",
+#            "\n".join([
+#                "Input directory: "+", ".join([inputDir,]),
+#                "Output directory: "+outputDir,
+#                "File: "+", ".join(fileNames),
+#                ]
+#                ),
+#            )
