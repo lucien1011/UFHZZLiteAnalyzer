@@ -86,6 +86,9 @@ std::vector<float> *lep_RelIso;
 std::vector<float> *lep_RelIsoNoFSR;
 std::vector<float> *lep_pterr;
 std::vector<float> *lep_dataMC;
+std::vector<int>* lep_matchedR03_PdgId;
+std::vector<int>* lep_matchedR03_MomId;
+std::vector<int>* lep_matchedR03_MomMomId;
 
 std::vector<float> *jet_mass;
 std::vector<float> *jet_pt; std::vector<float> *jet_eta; std::vector<float> *jet_phi;
@@ -95,7 +98,7 @@ std::vector<int> *fsrPhotons_lepindex;
 std::vector<float> *fsrPhotons_pt; std::vector<float> *fsrPhotons_eta; std::vector<float> *fsrPhotons_phi;
 std::vector<float> *fsrPhotons_pterr;
 
-void setHZZTree(TTree* tree){
+void setHZZTree(TTree* tree,bool isMC=false){
     
     tree->SetBranchStatus("*",0);
 
@@ -127,6 +130,11 @@ void setHZZTree(TTree* tree){
     tree->SetBranchStatus("lepFSR_eta",1);
     tree->SetBranchStatus("lepFSR_phi",1);
     tree->SetBranchStatus("lepFSR_mass",1);        
+    if (isMC) {
+        tree->SetBranchStatus("lep_matchedR03_PdgId",1); 
+        tree->SetBranchStatus("lep_matchedR03_MomId",1); 
+        tree->SetBranchStatus("lep_matchedR03_MomMomId",1); 
+    };
     tree->SetBranchStatus("jet_pt",1);
     tree->SetBranchStatus("jet_eta",1);
     tree->SetBranchStatus("jet_phi",1);
@@ -169,6 +177,11 @@ void setHZZTree(TTree* tree){
     tree->SetBranchAddress("lepFSR_eta",&lepFSR_eta);
     tree->SetBranchAddress("lepFSR_phi",&lepFSR_phi);
     tree->SetBranchAddress("lepFSR_mass",&lepFSR_mass);
+    if (isMC) {
+        tree->SetBranchAddress("lep_matchedR03_PdgId",&lep_matchedR03_PdgId); 
+        tree->SetBranchAddress("lep_matchedR03_MomId",&lep_matchedR03_MomId); 
+        tree->SetBranchAddress("lep_matchedR03_MomMomId",&lep_matchedR03_MomMomId); 
+    };
     tree->SetBranchAddress("jet_pt",&jet_pt);
     tree->SetBranchAddress("jet_eta",&jet_eta);
     tree->SetBranchAddress("jet_phi",&jet_phi);
@@ -221,7 +234,7 @@ void setHZZTree(TTree* tree){
  
 }
 
-void initNewLiteTree(TTree* newtree){
+void initNewLiteTree(TTree* newtree, bool isMC=false){
 
     newtree->Branch("Run",&Run,"Run/l");
     newtree->Branch("Event",&Event,"Event/l");
@@ -259,7 +272,12 @@ void initNewLiteTree(TTree* newtree){
     newtree->Branch("lepFSR_pt",&lepFSR_pt);
     newtree->Branch("lepFSR_eta",&lepFSR_eta);
     newtree->Branch("lepFSR_phi",&lepFSR_phi);
-    newtree->Branch("lepFSR_mass",&lepFSR_mass); 
+    newtree->Branch("lepFSR_mass",&lepFSR_mass);
+    if (isMC) {
+        newtree->Branch("lep_matchedR03_PdgId",&lep_matchedR03_PdgId); 
+        newtree->Branch("lep_matchedR03_MomId",&lep_matchedR03_MomId); 
+        newtree->Branch("lep_matchedR03_MomMomId",&lep_matchedR03_MomMomId); 
+    };
 
     newtree->Branch("pTL1",&pTL1,"pTL1/F");
     newtree->Branch("pTL2",&pTL2,"pTL2/F");

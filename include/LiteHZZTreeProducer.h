@@ -28,7 +28,9 @@ class LiteHZZTreeProducer : public Analyzer
                 TString outputDir_in,
                 TString outFileName_in,
                 bool do_wrong_fc_in=false,
-                bool do_smartcut_in=true
+                bool do_smartcut_in=true,
+                double minMllCut_in=4.0,
+                bool is_mc_in=false
                 );
          LiteHZZTreeProducer(
                 TString outputDir_in,
@@ -54,6 +56,8 @@ class LiteHZZTreeProducer : public Analyzer
         double isoCutMu=0.35;
         double leadingPtCut=20.0; 
         double subleadingPtCut=10.0; 
+        double minMllCut=4.0;
+        bool isMC=false;
 
         TString treeName = "Ana/passedEvents";
         TString outTreeName = "passedEvents";
@@ -80,7 +84,7 @@ bool LiteHZZTreeProducer::passSelection(){
 
 
 void LiteHZZTreeProducer::initTree(){
-    setHZZTree(tree);
+    setHZZTree(tree,isMC);
 }
 
 void LiteHZZTreeProducer::setDebugMode(bool debug_in){
@@ -91,7 +95,7 @@ void LiteHZZTreeProducer::setup(){
     outFile = TFile::Open(outputDir+outFileName,fOptionWrite);
     outTree = new TTree(outTreeName,outTreeName);
 
-    initNewLiteTree(outTree);
+    initNewLiteTree(outTree,isMC);
 }
 
 void LiteHZZTreeProducer::end(){
@@ -112,7 +116,9 @@ LiteHZZTreeProducer::LiteHZZTreeProducer(
                 TString outputDir_in,
                 TString outFileName_in,
                 bool do_wrong_fc_in,
-                bool do_smartcut_in
+                bool do_smartcut_in,
+                double minMllCut_in,
+                bool is_mc_in
                 ){
     m4lHighCut  = m4lHighCut_in;
     m4lLowCut   = m4lLowCut_in;
@@ -126,6 +132,8 @@ LiteHZZTreeProducer::LiteHZZTreeProducer(
     outFileName = outFileName_in;
     do_wrong_fc = do_wrong_fc_in;
     do_smartcut = do_smartcut_in;
+    minMllCut   = minMllCut_in;
+    isMC        = is_mc_in;
 }
 
 LiteHZZTreeProducer::LiteHZZTreeProducer(
@@ -336,7 +344,7 @@ int LiteHZZTreeProducer::process(){
                 i2j1 = (lep_i2_nofsr)+(lep_j1_nofsr); allM.push_back(i2j1.M());
             }
             if (debug) cout<<" min m(l+l-): "<<*min_element(allM.begin(),allM.end())<<endl;
-            if (*min_element(allM.begin(),allM.end())<4.0) { continue;}
+            if (*min_element(allM.begin(),allM.end())<minMllCut) { continue;}
             // Do not include FSR photons
             //  if (*min_element(allM.begin(),allM.end())<0.1) { continue;}
             // Check the "smart cut": !( |mZa-mZ| < |mZ1-mZ| && mZb<12)
