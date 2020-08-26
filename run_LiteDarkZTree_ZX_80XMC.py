@@ -16,7 +16,8 @@ fileNames = [
         #bkgTreeDirT2_Feb21+"TTJets_Dilept_TuneCUETP8M2T4_13TeV-amcatnloFXFX-pythia8.root",
         #bkgTreeDirT2_Feb21+"WZTo3LNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8.root",
         #bkgTreeDirT2_Aug10+"DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8.root",
-        bkgTreeDirT2_June2020+"ZGToLLG_01J_5f_lowMLL_lowGPt_TuneCP5_13TeV-amcatnloFXFX-pythia8_Summer16.root",
+        #bkgTreeDirT2_June2020+"ZGToLLG_01J_5f_lowMLL_lowGPt_TuneCP5_13TeV-amcatnloFXFX-pythia8_Summer16.root",
+        bkgTreeDirT2_June2020+"ZZTo4L_M-1toInf_13TeV_powheg_pythia8_Summer16.root",
         ]
 
 # ____________________________________________________________________________________________________________________________________ ||

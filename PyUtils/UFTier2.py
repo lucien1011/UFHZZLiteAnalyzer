@@ -1,6 +1,9 @@
 import subprocess,os
 
-t2_prefix = "root://cmsio5.rc.ufl.edu/"
+if not "ufhpc" in os.environ["HOSTNAME"]:
+    t2_prefix = "root://cmsio5.rc.ufl.edu/"
+else:
+    t2_prefix = "/cmsuf/data/"
 
 def isRootFile(fileName):
     return fileName.endswith(".root")
