@@ -5,9 +5,12 @@ from PyUtils.Shell import makedirs
 # ____________________________________________________________________________________________________________________________________ ||
 inputDir        = t2_prefix+'/store/user/t2/users/klo/Zprime/EXO-18-008/HZZNTuple_Run2016/'
 inputTreeName   = "Ana/passedEvents"
-outputDir       = "/raid/raid7/lucien/Higgs/Zprime-NTuple/20200415/SkimTree_Zprime_Run2017Data_m4l70/"
+#outputDir       = "/raid/raid7/lucien/Higgs/Zprime-NTuple/20200415/SkimTree_Zprime_Run2017Data_m4l70/"
+outputDir       = "/cmsuf/data/store/user/t2/users/klo/Zprime/EXO-18-008/80X_MCProd_DarkZNTuple/"
 
 fileNames = [
+    'ZZTo4L_13TeV_powheg_pythia8_RunIISummer16MiniAODv2.root',
+    'GluGluToContinToZZTo4mu_13TeV_MCFM701_pythia8_RunIISummer16MiniAODv2.root',
     "ZpTomumu_M10_13TeV_MadGraph5_pythia8-v4_muahmad-RunIISummer16MiniAODv2.root",  
     "ZpTomumu_M50_13TeV_MadGraph5_pythia8-v4_muahmad-RunIISummer16MiniAODv2.root",
     "ZpTomumu_M1_13TeV_MadGraph5_pythia8-v4_muahmad-RunIISummer16MiniAODv2.root",   
@@ -19,8 +22,6 @@ fileNames = [
     "ZpTomumu_M30_13TeV_MadGraph5_pythia8-v4_muahmad-RunIISummer16MiniAODv2.root",  
     "ZpTomumu_M80_13TeV_MadGraph5_pythia8-v4_muahmad-RunIISummer16MiniAODv2.root",
     "ZpTomumu_M40_13TeV_MadGraph5_pythia8-v4_muahmad-RunIISummer16MiniAODv2.root",
-    'ZZTo4L_13TeV_powheg_pythia8_RunIISummer16MiniAODv2.root',
-    'GluGluToContinToZZTo4mu_13TeV_MCFM701_pythia8_RunIISummer16MiniAODv2.root',
     ]
 
 # ____________________________________________________________________________________________________________________________________ ||
